@@ -1,0 +1,5 @@
+00-tvon.md before:tvon
+01-leftwipe.md after:leftwipe
+02-both.md before:topwipe after:bottomwipe
+03-diagonal.md before:diagonal
+04-tvoff.md before:tvoff after:tvoff

@@ -1,0 +1,62 @@
+{
+  "name": "@vybestack/vybeslides",
+  "version": "0.1.0",
+  "description": "Declarative presentation library for terminal UIs",
+  "type": "module",
+  "main": "src/index.ts",
+  "bin": {
+    "vybeslides": "./src/cli/index.ts"
+  },
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "bun": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "echo 'vybeslides uses bun runtime - no build required'",
+    "lint": "bunx eslint \"src/**/*.{ts,tsx}\" \"scripts/**/*.ts\"",
+    "test": "bunx vitest run",
+    "test:watch": "bunx vitest",
+    "test:ci": "bunx vitest run",
+    "test:coverage": "bunx vitest run --coverage",
+    "check:limits": "bun run scripts/check-limits.ts",
+    "check": "bun run lint && bun run test && bun run check:limits",
+    "typecheck": "bunx tsc --noEmit"
+  },
+  "keywords": [
+    "presentation",
+    "slides",
+    "terminal-ui",
+    "vybestack"
+  ],
+  "author": "Vybestack",
+  "license": "ISC",
+  "engines": {
+    "node": ">=20",
+    "bun": ">=1.2.0"
+  },
+  "dependencies": {
+    "@vybestack/opentui-core": "^0.1.62",
+    "@vybestack/opentui-react": "^0.1.62",
+    "react": "^19.2.3",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@testing-library/react": "^16.3.1",
+    "@types/bun": "^1.3.4",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.8",
+    "@typescript-eslint/eslint-plugin": "^8.48.1",
+    "@typescript-eslint/parser": "^8.48.1",
+    "@vitest/eslint-plugin": "^1.5.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-sonarjs": "^3.0.5",
+    "globals": "^16.5.0",
+    "happy-dom": "^20.3.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.15"
+  }
+}

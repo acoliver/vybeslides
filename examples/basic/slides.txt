@@ -1,0 +1,5 @@
+01-title.md before:tvon
+02-agenda.md before:diagonal
+03-code.md before:leftwipe
+04-table.md before:rightwipe
+05-end.md after:tvoff
