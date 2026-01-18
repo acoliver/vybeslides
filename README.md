@@ -1,75 +1,157 @@
 # VybeSlides
 
-Retro terminal-based slides in LLXPRT greenscreen mode.
+Retro terminal-based slide presentations with LLXPRT greenscreen aesthetics.
 
-## Install
-
-```bash
-npm install -g @vybestack/vybeslides
+```ascii
+     ░██        ░██        ░██    ░██░█████████ ░█████████░██████████
+░██  ░██        ░██         ░██  ░██ ░██     ░██░██     ░██   ░██
+ ░██ ░██        ░██          ░██░██  ░██     ░██░██     ░██   ░██
+  ░██░██        ░██           ░███   ░█████████ ░█████████    ░██
+ ░██ ░██        ░██          ░██░██  ░██        ░██   ░██     ░██
+░██  ░██        ░██         ░██  ░██ ░██        ░██    ░██    ░██
+     ░██████████░██████████░██    ░██░██        ░██     ░██   ░██
 ```
 
-**Bun is required** to run TypeScript directly.
+## Features
+
+- **Greenscreen theme** — Classic `#6a9955` green on black
+- **Markdown-driven** — Write slides in familiar markdown
+- **ASCII art support** — Embed ASCII art with code fences
+- **Retro transitions** — Diagonal wipes, TV on/off effects (coming soon)
+- **Keyboard navigation** — No mouse required
+
+## Installation
+
+Requires [Bun](https://bun.sh) runtime.
 
 ```bash
-curl -fsSL https://bun.sh/install | bash
+# Clone the repository
+git clone git@github.com:acoliver/vybeslides.git
+cd vybeslides
+
+# Install dependencies
+bun install
+
+# Run a presentation
+bun src/cli/index.ts ./examples/basic
 ```
 
-## Run
+## Usage
 
-```bash
-vybeslides ./examples/basic
+### Create a Presentation
+
+1. Create a directory for your presentation
+2. Add markdown files for each slide
+3. Create a `slides.txt` file listing slides in order
+
+```
+my-presentation/
+├── slides.txt
+├── 01-title.md
+├── 02-agenda.md
+├── 03-content.md
+└── 04-end.md
 ```
 
-### Options
-
-```bash
-vybeslides <presentation-dir> [--header off] [--footer off]
-```
-
-- `--header off` disables the header bar
-- `--footer off` disables the footer bar
-
-## Slide Format
-
-A presentation directory must include `slides.txt` with one slide per line:
+### slides.txt Format
 
 ```
 01-title.md before:tvon
 02-agenda.md before:diagonal
-03-code.md before:leftwipe
-04-table.md before:rightwipe
-05-end.md after:tvoff
+03-content.md before:leftwipe
+04-end.md after:tvoff
 ```
 
-Each slide is a Markdown file. Use `ascii` code fences for ASCII art:
+Each line: `filename.md` with optional `before:` and `after:` transition directives.
 
-````text
+### Available Transitions
+
+- `diagonal` — Top-left to bottom-right wipe
+- `leftwipe` — Left edge sweeps right
+- `rightwipe` — Right edge sweeps left
+- `topwipe` — Top edge sweeps down
+- `bottomwipe` — Bottom edge sweeps up
+- `tvon` — Old tube TV turning on effect
+- `tvoff` — Old tube TV turning off effect
+
+### Slide Markdown
+
+Supports standard markdown:
+
+```markdown
+# Header 1
+## Header 2
+
+Regular paragraph text.
+
+- Bullet list
+- Another item
+
+1. Numbered list
+2. Second item
+
+> Blockquote
+
+| Column 1 | Column 2 |
+|----------|----------|
+| Data     | More     |
+```
+
+Plus ASCII art blocks:
+
+````markdown
 ```ascii
-  ░██ ░██
-  ░██ ░██
+  ╭─╮╭─╮╭─╮
+  │░││░││░│
+  └─╯└─╯└─╯
 ```
 ````
 
-## Navigation
+### Keyboard Navigation
 
-- `n`, `→`, `Space`, `PageDown`, `↓`: Next slide
-- `p`, `←`, `PageUp`, `↑`: Previous slide
-- `q`: Quit
-- `?`: Help
-- `0-9`: Jump by index (0 is the first slide)
-- `:10`: Jump to slide 10+
-- `Escape`: Cancel an in-progress transition
+| Key | Action |
+|-----|--------|
+| `n`, `→`, `↓`, `Space`, `PageDown` | Next slide |
+| `p`, `←`, `↑`, `PageUp` | Previous slide |
+| `0-9` | Jump to slide (0-indexed) |
+| `:10`, `:15`, etc. | Jump to slide 10, 15, etc. |
+| `q`, `Escape` | Quit |
 
-## Example Deck
-
-The `examples/basic` directory includes a ready-to-run sample deck:
+### CLI Options
 
 ```bash
-vybeslides ./examples/basic
+vybeslides ./presentation [--header off] [--footer off]
 ```
 
-## Notes
+- `--header off` — Hide the header bar
+- `--footer off` — Hide the footer bar
 
-- Slides appear instantly unless `before:` is specified
-- Slides disappear instantly unless `after:` is specified
-- `after:tvoff` runs only when quitting on the last slide
+## Development
+
+```bash
+# Run tests
+bun test
+
+# Run linting
+bun run lint
+
+# Type checking
+bun run typecheck
+
+# All checks
+bun run check
+```
+
+## Terminal Compatibility
+
+Best experienced in modern terminals with true color support:
+
+- iTerm2
+- Kitty
+- Ghostty
+- WezTerm
+- Alacritty
+
+## License
+
+MIT
