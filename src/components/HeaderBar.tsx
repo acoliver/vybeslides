@@ -25,7 +25,7 @@ export function HeaderBar({ slideNumber, totalSlides, title }: HeaderBarProps): 
     >
       <text fg={fg}>{displayTitle}</text>
       <text fg={fg}>
-        [{slideNumber}/{totalSlides}]
+        [{slideNumber}/{totalSlides - 1}]
       </text>
     </box>
   );

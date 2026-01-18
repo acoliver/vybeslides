@@ -14,22 +14,22 @@ describe('SlideDisplay - slide container', () => {
 });
 
 describe('SlideDisplay - optional header/footer', () => {
-  it('should render with header', () => {
+  it('should render with header (0-based index)', () => {
     const { getByText } = render(
-      <SlideDisplay showHeader={true} slideNumber={1} totalSlides={5}>
+      <SlideDisplay showHeader={true} slideNumber={0} totalSlides={5}>
         <text>Content</text>
       </SlideDisplay>,
     );
-    expect(getByText(/\[1\/5\]/)).toBeTruthy();
+    expect(getByText(/\[0\/4\]/)).toBeTruthy();
   });
 
   it('should render without header', () => {
     const { queryByText } = render(
-      <SlideDisplay showHeader={false} slideNumber={1} totalSlides={5}>
+      <SlideDisplay showHeader={false} slideNumber={0} totalSlides={5}>
         <text>Content</text>
       </SlideDisplay>,
     );
-    expect(queryByText(/\[1\/5\]/)).toBeNull();
+    expect(queryByText(/\[0\/4\]/)).toBeNull();
   });
 
   it('should render with footer', () => {

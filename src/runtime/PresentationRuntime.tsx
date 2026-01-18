@@ -219,7 +219,7 @@ export function PresentationRuntime({
       <SlideDisplay
         showHeader={showHeader}
         showFooter={showFooter}
-        slideNumber={navState.displayIndex + 1}
+        slideNumber={navState.displayIndex}
         totalSlides={slides.length}
         title={title}
       >

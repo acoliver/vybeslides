@@ -3,27 +3,27 @@ import { render } from '@testing-library/react';
 import { HeaderBar } from './HeaderBar';
 
 describe('HeaderBar - logo display', () => {
-  it('should render header with slide counter', () => {
-    const { getByText } = render(<HeaderBar slideNumber={1} totalSlides={5} />);
-    expect(getByText(/\[1\/5\]/)).toBeTruthy();
+  it('should render header with slide counter (0-based)', () => {
+    const { getByText } = render(<HeaderBar slideNumber={0} totalSlides={5} />);
+    expect(getByText(/\[0\/4\]/)).toBeTruthy();
   });
 });
 
 describe('HeaderBar - slide counter format', () => {
-  it('should display slide counter in correct format', () => {
-    const { getByText } = render(<HeaderBar slideNumber={3} totalSlides={10} />);
-    expect(getByText(/\[3\/10\]/)).toBeTruthy();
+  it('should display slide counter in 0-based format', () => {
+    const { getByText } = render(<HeaderBar slideNumber={2} totalSlides={10} />);
+    expect(getByText(/\[2\/9\]/)).toBeTruthy();
   });
 });
 
 describe('HeaderBar - dynamic counter width', () => {
   it('should handle single digit slide numbers', () => {
-    const { getByText } = render(<HeaderBar slideNumber={1} totalSlides={5} />);
-    expect(getByText(/\[1\/5\]/)).toBeTruthy();
+    const { getByText } = render(<HeaderBar slideNumber={0} totalSlides={5} />);
+    expect(getByText(/\[0\/4\]/)).toBeTruthy();
   });
 
   it('should handle multi-digit slide numbers', () => {
-    const { getByText } = render(<HeaderBar slideNumber={42} totalSlides={123} />);
-    expect(getByText(/\[42\/123\]/)).toBeTruthy();
+    const { getByText } = render(<HeaderBar slideNumber={41} totalSlides={123} />);
+    expect(getByText(/\[41\/122\]/)).toBeTruthy();
   });
 });
