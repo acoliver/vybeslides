@@ -9,6 +9,7 @@ export interface AppOptions {
   slides: LoadedSlide[];
   title?: string | null;
   onQuit?: () => void;
+  onReload?: () => Promise<LoadedSlide[]>;
 }
 
 export function createApp(options: AppOptions): React.ReactNode {
@@ -19,6 +20,7 @@ export function createApp(options: AppOptions): React.ReactNode {
       showFooter={options.showFooter}
       title={options.title}
       onQuit={options.onQuit}
+      onReload={options.onReload}
     />
   );
 }

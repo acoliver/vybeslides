@@ -24,17 +24,20 @@ export interface PresentationRuntimeProps {
   readonly showFooter: boolean;
   readonly title?: string | null;
   readonly onQuit?: () => void;
+  readonly onReload?: () => Promise<LoadedSlide[]>;
 }
 
 const inputHandler = createInputHandler();
 
 export function PresentationRuntime({
-  slides,
+  slides: initialSlides,
   showHeader,
   showFooter,
   title,
   onQuit,
+  onReload,
 }: PresentationRuntimeProps): React.ReactNode {
+  const [slides, setSlides] = useState<LoadedSlide[]>(initialSlides);
   // Create state machine once
   const machineRef = useRef<NavigationStateMachine | null>(null);
   if (machineRef.current === null) {
@@ -162,7 +165,26 @@ export function PresentationRuntime({
       });
       return;
     }
+    if (action === 'reload') {
+      key.preventDefault();
+      dispatch({ type: 'RELOAD' });
+      return;
+    }
   });
+
+  // Handle reload request
+  useEffect(() => {
+    if (navState.reloadRequested && onReload) {
+      onReload()
+        .then((newSlides) => {
+          setSlides(newSlides);
+          dispatch({ type: 'RELOAD_ACKNOWLEDGED' });
+        })
+        .catch(() => {
+          dispatch({ type: 'RELOAD_ACKNOWLEDGED' });
+        });
+    }
+  }, [navState.reloadRequested, onReload, dispatch]);
 
   // Get slide to display
   const slide = slides[navState.displayIndex];

@@ -76,6 +76,14 @@ async function startRuntime(options: StartRuntimeOptions): Promise<void> {
     renderer.destroy();
   };
 
+  const reloadSlides = async (): Promise<LoadedSlide[]> => {
+    const validationResult = await validatePresentationCore(options.directory);
+    if (!validationResult.success || !validationResult.entries) {
+      return options.slides;
+    }
+    return loadSlides(options.directory, validationResult.entries);
+  };
+
   const app = createApp({
     directory: options.directory,
     showHeader: options.showHeader,
@@ -83,6 +91,7 @@ async function startRuntime(options: StartRuntimeOptions): Promise<void> {
     slides: options.slides,
     title: options.title,
     onQuit: cleanup,
+    onReload: reloadSlides,
   });
 
   root.render(app);

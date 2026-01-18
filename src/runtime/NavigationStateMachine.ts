@@ -17,6 +17,8 @@ export interface NavigationState {
   transitionType: 'before' | 'after' | null;
   /** Name of the transition */
   transitionName: string | null;
+  /** Whether a reload has been requested */
+  reloadRequested: boolean;
 }
 
 export type NavigationEvent =
@@ -25,7 +27,9 @@ export type NavigationEvent =
   | { type: 'JUMP'; index: number }
   | { type: 'QUIT'; onQuit?: () => void }
   | { type: 'TRANSITION_COMPLETE' }
-  | { type: 'CANCEL_TRANSITION' };
+  | { type: 'CANCEL_TRANSITION' }
+  | { type: 'RELOAD' }
+  | { type: 'RELOAD_ACKNOWLEDGED' };
 
 export interface NavigationStateMachine {
   getState(): NavigationState;
@@ -42,6 +46,7 @@ function createInitialState(): NavigationState {
     onQuitCallback: null,
     transitionType: null,
     transitionName: null,
+    reloadRequested: false,
   };
 }
 
@@ -256,6 +261,16 @@ export function createNavigationStateMachine(slides: LoadedSlide[]): NavigationS
         if (state.isTransitioning) {
           state = createClearedTransitionState(state, state.currentIndex);
         }
+        break;
+      }
+
+      case 'RELOAD': {
+        state = { ...state, reloadRequested: true };
+        break;
+      }
+
+      case 'RELOAD_ACKNOWLEDGED': {
+        state = { ...state, reloadRequested: false };
         break;
       }
     }

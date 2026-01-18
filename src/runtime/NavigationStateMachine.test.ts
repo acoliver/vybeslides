@@ -192,4 +192,31 @@ describe('NavigationStateMachine', () => {
       expect(machine.getState().isTransitioning).toBe(false);
     });
   });
+
+  describe('reload', () => {
+    it('should set reloadRequested flag', () => {
+      const machine = createNavigationStateMachine(mockSlides);
+      machine.dispatch({ type: 'RELOAD' });
+
+      expect(machine.getState().reloadRequested).toBe(true);
+    });
+
+    it('should clear reloadRequested after acknowledgement', () => {
+      const machine = createNavigationStateMachine(mockSlides);
+      machine.dispatch({ type: 'RELOAD' });
+      expect(machine.getState().reloadRequested).toBe(true);
+
+      machine.dispatch({ type: 'RELOAD_ACKNOWLEDGED' });
+      expect(machine.getState().reloadRequested).toBe(false);
+    });
+
+    it('should preserve current slide index on reload', () => {
+      const machine = createNavigationStateMachine(mockSlides);
+      machine.dispatch({ type: 'JUMP', index: 2 });
+      machine.dispatch({ type: 'RELOAD' });
+
+      expect(machine.getState().currentIndex).toBe(2);
+      expect(machine.getState().reloadRequested).toBe(true);
+    });
+  });
 });

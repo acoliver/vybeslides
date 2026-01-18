@@ -126,3 +126,19 @@ describe('InputHandler - Cancel Keys', () => {
     expect(result.action).toBe('cancel');
   });
 });
+
+describe('InputHandler - Reload Keys', () => {
+  it('should recognize r as reload', () => {
+    const handler = createInputHandler();
+    const { result } = handler.parseKey('r');
+
+    expect(result.action).toBe('reload');
+  });
+
+  it('should recognize R as reload', () => {
+    const handler = createInputHandler();
+    const { result } = handler.parseKey('R');
+
+    expect(result.action).toBe('reload');
+  });
+});
