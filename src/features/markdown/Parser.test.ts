@@ -132,3 +132,56 @@ A retro terminal-based slide presenter`;
     expect(content).toBe('Welcome to VybeSlides');
   });
 });
+
+describe('parseMarkdown - spacing context', () => {
+  it('should track that H2 following H2 needs no spacing (both headers)', () => {
+    const markdown = `## Section 1
+## Section 2`;
+    const result = parseMarkdown(markdown);
+    expect(result.elements).toHaveLength(2);
+    expect(result.elements[0]?.type).toBe('header');
+    expect(result.elements[1]?.type).toBe('header');
+  });
+
+  it('should track that bullet list follows H2 directly', () => {
+    const markdown = `## Section
+- Item 1
+- Item 2`;
+    const result = parseMarkdown(markdown);
+    expect(result.elements).toHaveLength(2);
+    expect(result.elements[0]?.type).toBe('header');
+    expect(result.elements[1]?.type).toBe('bullet_list');
+  });
+
+  it('should track paragraph after code block', () => {
+    const markdown = `\`\`\`bash
+npm install
+\`\`\`
+Run the command above.`;
+    const result = parseMarkdown(markdown);
+    expect(result.elements).toHaveLength(2);
+    expect(result.elements[0]?.type).toBe('code_block');
+    expect(result.elements[1]?.type).toBe('paragraph');
+  });
+
+  it('should track H2 after code block', () => {
+    const markdown = `\`\`\`bash
+npm install
+\`\`\`
+## Next Section`;
+    const result = parseMarkdown(markdown);
+    expect(result.elements).toHaveLength(2);
+    expect(result.elements[0]?.type).toBe('code_block');
+    expect(result.elements[1]?.type).toBe('header');
+  });
+
+  it('should track paragraph after bullet list', () => {
+    const markdown = `- Item 1
+- Item 2
+This is a note.`;
+    const result = parseMarkdown(markdown);
+    expect(result.elements).toHaveLength(2);
+    expect(result.elements[0]?.type).toBe('bullet_list');
+    expect(result.elements[1]?.type).toBe('paragraph');
+  });
+});

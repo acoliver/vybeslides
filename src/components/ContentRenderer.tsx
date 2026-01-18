@@ -77,17 +77,20 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
         const nextIsTableOrCode =
           nextElement?.type === 'table' || nextElement?.type === 'code_block';
 
+        // Check previous element for spacing decisions
+        const prevElement = elements[index - 1];
+        const prevIsList =
+          prevElement?.type === 'bullet_list' || prevElement?.type === 'numbered_list';
+        const prevIsCodeBlock = prevElement?.type === 'code_block';
+
         if (element.type === 'header') {
           const text = element.content;
           // Use OpenTUI's code component with markdown syntax highlighting
           // Headers get bold + accent color via tree-sitter
           const prefix = '#'.repeat(element.level) + ' ';
-          // Check previous element to determine spacing
-          const prevElement = elements[index - 1];
-          const prevIsList =
-            prevElement?.type === 'bullet_list' || prevElement?.type === 'numbered_list';
-          // H1 always gets top margin (if not first), H2+ gets margin if after a list
-          const marginTop = index > 0 && (element.level === 1 || prevIsList) ? 1 : 0;
+          // H1 always gets top margin (if not first), H2+ gets margin if after a list or code
+          const marginTop =
+            index > 0 && (element.level === 1 || prevIsList || prevIsCodeBlock) ? 1 : 0;
           // Only add bottom margin for H1, and not if next element is a table or code block
           const marginBottom = element.level === 1 && !nextIsTableOrCode ? 1 : 0;
           return (
@@ -102,9 +105,11 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
           );
         }
         if (element.type === 'paragraph') {
+          // Add top margin if after a list or code block
+          const marginTop = prevIsList || prevIsCodeBlock ? 1 : 0;
           // Use code component to get markdown inline formatting (bold, italic, etc.)
           return (
-            <box key={index}>
+            <box key={index} style={{ marginTop }}>
               <code
                 filetype="markdown"
                 content={element.content}
