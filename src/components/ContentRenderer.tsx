@@ -15,32 +15,33 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
         if (element.type === 'header') {
           const text = element.content;
           if (element.level === 1) {
-            // H1 gets big block style
-            const upper = text.toUpperCase();
-            const bar = '█'.repeat(upper.length + 4);
+            // H1 gets huge ASCII font
             return (
-              <box key={index} style={{ flexDirection: 'column', marginBottom: 1 }}>
-                <text fg={accent}>{bar}</text>
-                <text fg={accent}>█ {upper} █</text>
-                <text fg={accent}>{bar}</text>
+              <box key={index} style={{ marginBottom: 1 }}>
+                <ascii-font text={text.toUpperCase()} font="huge" color={accent} />
               </box>
             );
           }
           if (element.level === 2) {
-            // H2 gets underline
-            const underline = '═'.repeat(text.length);
+            // H2 gets block ASCII font
             return (
-              <box key={index} style={{ flexDirection: 'column' }}>
-                <text fg={accent}>{text}</text>
-                <text fg={accent}>{underline}</text>
+              <box key={index} style={{ marginBottom: 1 }}>
+                <ascii-font text={text.toUpperCase()} font="block" color={accent} />
               </box>
             );
           }
-          // H3+ just prefix
-          const prefix = '─'.repeat(Math.max(1, 4 - element.level));
+          if (element.level === 3) {
+            // H3 gets tiny ASCII font
+            return (
+              <box key={index}>
+                <ascii-font text={text.toUpperCase()} font="tiny" color={accent} />
+              </box>
+            );
+          }
+          // H4+ regular text
           return (
             <text key={index} fg={accent}>
-              {prefix} {text}
+              {text}
             </text>
           );
         }
