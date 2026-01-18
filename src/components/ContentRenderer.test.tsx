@@ -37,7 +37,7 @@ describe('ContentRenderer - lists', () => {
       { type: 'bullet_list', items: ['Item 1', 'Item 2'] },
     ];
     const { getByText } = render(<ContentRenderer elements={elements} />);
-    expect(getByText('Item 1')).toBeTruthy();
+    expect(getByText('• Item 1')).toBeTruthy();
   });
 
   it('should render numbered list items', () => {
@@ -45,6 +45,6 @@ describe('ContentRenderer - lists', () => {
       { type: 'numbered_list', items: ['First', 'Second'] },
     ];
     const { getByText } = render(<ContentRenderer elements={elements} />);
-    expect(getByText('First')).toBeTruthy();
+    expect(getByText('1. First')).toBeTruthy();
   });
 });

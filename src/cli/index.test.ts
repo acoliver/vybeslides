@@ -23,4 +23,11 @@ describe('CLI entry point', () => {
     const hasError = 'error' in result && typeof result.error === 'string';
     expect(hasError).toBe(true);
   });
+
+  it('should return error when presentation runtime fails', async () => {
+    const fixture = 'test-fixtures/valid-presentations/runtime-basic';
+    const result = await run([fixture]);
+
+    expect(result.success).toBe(false);
+  });
 });

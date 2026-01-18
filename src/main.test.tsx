@@ -2,12 +2,23 @@ import { describe, it, expect } from 'vitest';
 import { createApp } from './main';
 
 describe('createApp', () => {
-  it('should create app with directory', () => {
+  const slides = [
+    {
+      filename: '00.md',
+      content: '# Intro',
+      beforeTransition: null,
+      afterTransition: null,
+    },
+  ];
+
+  it('should create app with slides', () => {
     const app = createApp({
       directory: './presentation',
       showHeader: true,
       showFooter: true,
+      slides,
     });
+
     expect(app).toBeDefined();
   });
 
@@ -16,6 +27,7 @@ describe('createApp', () => {
       directory: './presentation',
       showHeader: false,
       showFooter: true,
+      slides,
     });
     expect(app).toBeDefined();
   });
@@ -25,15 +37,17 @@ describe('createApp', () => {
       directory: './presentation',
       showHeader: true,
       showFooter: false,
+      slides,
     });
     expect(app).toBeDefined();
   });
 
-  it('should create app with minimal options', () => {
+  it('should create app with header/footer disabled', () => {
     const app = createApp({
       directory: './presentation',
       showHeader: false,
       showFooter: false,
+      slides,
     });
     expect(app).toBeDefined();
   });

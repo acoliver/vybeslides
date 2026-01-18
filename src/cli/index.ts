@@ -2,7 +2,7 @@
 
 import { parseArguments } from './ArgumentParser';
 import { checkBunRuntime } from './RuntimeCheck';
-import { validatePresentation } from './Runner';
+import { runPresentation } from './Runner';
 
 export interface RunSuccess {
   success: true;
@@ -48,11 +48,15 @@ export async function run(args: string[]): Promise<RunResult> {
     };
   }
 
-  const validationResult = await validatePresentation(parseResult.directory);
-  if (!validationResult.success) {
+  const runResult = await runPresentation({
+    directory: parseResult.directory,
+    showHeader: parseResult.options.showHeader,
+    showFooter: parseResult.options.showFooter,
+  });
+  if (!runResult.success) {
     return {
       success: false,
-      error: validationResult.error,
+      error: runResult.error,
     };
   }
 

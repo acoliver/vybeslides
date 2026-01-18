@@ -16,8 +16,8 @@ export interface InputHandler {
   reset(): InputHandlerState;
 }
 
-const FORWARD_KEYS = new Set(['n', 'ArrowRight', 'Space', 'PageDown', 'ArrowDown']);
-const BACKWARD_KEYS = new Set(['p', 'ArrowLeft', 'PageUp', 'ArrowUp']);
+const FORWARD_KEYS = new Set(['n', 'right', 'space', 'pagedown', 'down']);
+const BACKWARD_KEYS = new Set(['p', 'left', 'pageup', 'up']);
 const QUIT_KEYS = new Set(['q']);
 const DIGIT_KEYS = new Set(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);
 
@@ -40,7 +40,7 @@ export function createInputHandler(): InputHandler {
       return { result: { action: 'quit' }, newState: state };
     }
 
-    if (key === 'Escape') {
+    if (key === 'escape') {
       return { result: { action: 'cancel' }, newState: state };
     }
 
