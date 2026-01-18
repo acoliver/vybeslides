@@ -1,5 +1,8 @@
 # VybeSlides
 
+[![VybeSlides CI](https://github.com/acoliver/vybeslides/actions/workflows/ci.yml/badge.svg)](https://github.com/acoliver/vybeslides/actions/workflows/ci.yml)
+&nbsp;[![Discord Server](https://dcbadge.limes.pink/api/server/https://discord.gg/Wc6dZqWWYv?style=flat)](https://discord.gg/Wc6dZqWWYv)
+
 Create terminal slide presentations.
 
 ```ascii
