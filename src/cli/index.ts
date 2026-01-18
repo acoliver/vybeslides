@@ -24,11 +24,13 @@ Usage:
 Options:
   --header off    Disable header bar
   --footer off    Disable footer bar
+  --render <num>  Render slide <num> to stdout (headless mode)
   --help, -h      Show this help message
 
 Example:
   vybeslides ./my-presentation
   vybeslides ./slides --footer off
+  vybeslides ./slides --render 5 > slide5.txt
 `;
 
 export async function run(args: string[]): Promise<RunResult> {
@@ -52,6 +54,7 @@ export async function run(args: string[]): Promise<RunResult> {
     directory: parseResult.directory,
     showHeader: parseResult.options.showHeader,
     showFooter: parseResult.options.showFooter,
+    render: parseResult.options.render,
   });
   if (!runResult.success) {
     return {

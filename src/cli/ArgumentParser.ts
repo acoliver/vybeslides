@@ -4,6 +4,7 @@ export interface ParsedArguments {
   options: {
     showHeader: boolean;
     showFooter: boolean;
+    render?: number;
   };
 }
 
@@ -51,6 +52,7 @@ interface OptionsParseSuccess {
   options: {
     showHeader: boolean;
     showFooter: boolean;
+    render?: number;
   };
 }
 
@@ -62,9 +64,10 @@ interface OptionsParseFailure {
 type OptionsParseResult = OptionsParseSuccess | OptionsParseFailure;
 
 function parseOptions(args: string[]): OptionsParseResult {
-  const initialOptions = {
+  const initialOptions: OptionsParseSuccess['options'] = {
     showHeader: true,
     showFooter: true,
+    render: undefined,
   };
 
   const reducer = (
@@ -91,6 +94,10 @@ function parseOptions(args: string[]): OptionsParseResult {
       return parseToggleOption(optionState, allArgs[index + 1], 'footer');
     }
 
+    if (arg === '--render') {
+      return parseRenderOption(optionState, allArgs[index + 1]);
+    }
+
     return {
       success: false,
       error: `Unknown argument: ${arg}`,
@@ -101,7 +108,7 @@ function parseOptions(args: string[]): OptionsParseResult {
 }
 
 function parseToggleOption(
-  options: { showHeader: boolean; showFooter: boolean },
+  options: OptionsParseSuccess['options'],
   value: string | undefined,
   type: 'header' | 'footer',
 ): OptionsParseResult {
@@ -121,9 +128,37 @@ function parseToggleOption(
   };
 }
 
+function parseRenderOption(
+  options: OptionsParseSuccess['options'],
+  value: string | undefined,
+): OptionsParseResult {
+  if (value === undefined) {
+    return {
+      success: false,
+      error: 'Missing value for --render',
+    };
+  }
+
+  const slideNum = parseInt(value, 10);
+  if (isNaN(slideNum) || slideNum < 0) {
+    return {
+      success: false,
+      error: `Invalid value for --render: ${value} (must be a non-negative number)`,
+    };
+  }
+
+  return {
+    success: true,
+    options: {
+      ...options,
+      render: slideNum,
+    },
+  };
+}
+
 function getHandledIndices(args: string[], index: number): number[] {
   const previous = args[index - 1];
-  if (previous === '--header' || previous === '--footer') {
+  if (previous === '--header' || previous === '--footer' || previous === '--render') {
     return [index];
   }
 

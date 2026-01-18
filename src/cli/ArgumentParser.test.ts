@@ -52,3 +52,45 @@ describe('parseArguments', () => {
     expect(result.success && result.directory === './presentation').toBe(true);
   });
 });
+
+describe('parseArguments - render option', () => {
+  it('should parse --render with slide number', () => {
+    const result = parseArguments(['./presentation', '--render', '5']);
+    expect(result.success).toBe(true);
+    expect(result.success && result.options.render).toBe(5);
+  });
+
+  it('should parse --render with 0 for first slide', () => {
+    const result = parseArguments(['./presentation', '--render', '0']);
+    expect(result.success).toBe(true);
+    expect(result.success && result.options.render).toBe(0);
+  });
+
+  it('should default render to undefined', () => {
+    const result = parseArguments(['./presentation']);
+    expect(result.success).toBe(true);
+    expect(result.success && result.options.render).toBeUndefined();
+  });
+
+  it('should return error for non-numeric render value', () => {
+    const result = parseArguments(['./presentation', '--render', 'abc']);
+    expect(result.success).toBe(false);
+  });
+
+  it('should return error for negative render value', () => {
+    const result = parseArguments(['./presentation', '--render', '-1']);
+    expect(result.success).toBe(false);
+  });
+
+  it('should return error for missing render value', () => {
+    const result = parseArguments(['./presentation', '--render']);
+    expect(result.success).toBe(false);
+  });
+
+  it('should combine --render with other options', () => {
+    const result = parseArguments(['./presentation', '--header', 'off', '--render', '3']);
+    expect(result.success).toBe(true);
+    expect(result.success && result.options.showHeader).toBe(false);
+    expect(result.success && result.options.render).toBe(3);
+  });
+});
