@@ -1,6 +1,6 @@
 {
   "name": "@vybestack/vybeslides",
-  "version": "0.1.2",
+  "version": "0.3.0",
   "description": "Declarative presentation library for terminal UIs",
   "type": "module",
   "main": "src/index.ts",

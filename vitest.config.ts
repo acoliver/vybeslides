@@ -5,8 +5,8 @@ export default defineConfig({
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
     exclude: [
       'src/main.test.tsx',
-      'src/runtime/**/*.test.ts',
-      'src/runtime/**/*.test.tsx',
+      'src/runtime/PresentationRuntime.test.tsx',
+      'src/runtime/TransitionOrchestrator.test.ts',
       'src/components/**/*.test.tsx',
       'src/cli/index.test.ts',
     ],

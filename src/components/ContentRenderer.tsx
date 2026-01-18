@@ -89,19 +89,31 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
           );
         }
         if (element.type === 'paragraph') {
+          // Use code component to get markdown inline formatting (bold, italic, etc.)
           return (
-            <text key={index} fg={fg}>
-              {element.content}
-            </text>
+            <box key={index}>
+              <code
+                filetype="markdown"
+                content={element.content}
+                drawUnstyledText={false}
+                syntaxStyle={markdownSyntaxStyle}
+              />
+            </box>
           );
         }
         if (element.type === 'bullet_list') {
           return (
             <box key={index} style={{ flexDirection: 'column' }}>
               {element.items.map((item, itemIndex) => (
-                <text key={itemIndex} fg={fg}>
-                  • {item}
-                </text>
+                <box key={itemIndex} style={{ flexDirection: 'row' }}>
+                  <text fg={fg}>• </text>
+                  <code
+                    filetype="markdown"
+                    content={item}
+                    drawUnstyledText={false}
+                    syntaxStyle={markdownSyntaxStyle}
+                  />
+                </box>
               ))}
             </box>
           );
@@ -142,15 +154,37 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
           );
         }
         if (element.type === 'table') {
+          // Calculate column widths for proper alignment
+          const allRows = [element.headers, ...element.rows];
+          const columnWidths = element.headers.map((_, colIndex) =>
+            Math.max(...allRows.map((row) => (row[colIndex] || '').length)),
+          );
+
+          const padCell = (cell: string, width: number): string => {
+            return cell.padEnd(width, ' ');
+          };
+
+          const formatRow = (row: string[]): string => {
+            return (
+              '│ ' + row.map((cell, i) => padCell(cell || '', columnWidths[i])).join(' │ ') + ' │'
+            );
+          };
+
+          const topBorder = '┌─' + columnWidths.map((w) => '─'.repeat(w)).join('─┬─') + '─┐';
+          const headerSeparator = '├─' + columnWidths.map((w) => '─'.repeat(w)).join('─┼─') + '─┤';
+          const bottomBorder = '└─' + columnWidths.map((w) => '─'.repeat(w)).join('─┴─') + '─┘';
+
           return (
             <box key={index} style={{ flexDirection: 'column' }}>
-              <text fg={accent}>| {element.headers.join(' | ')} |</text>
-              <text fg={fg}>|{element.headers.map(() => '---').join('|')}|</text>
+              <text fg={fg}>{topBorder}</text>
+              <text fg={accent}>{formatRow(element.headers)}</text>
+              <text fg={fg}>{headerSeparator}</text>
               {element.rows.map((row, rowIndex) => (
                 <text key={rowIndex} fg={fg}>
-                  | {row.join(' | ')} |
+                  {formatRow(row)}
                 </text>
               ))}
+              <text fg={fg}>{bottomBorder}</text>
             </box>
           );
         }

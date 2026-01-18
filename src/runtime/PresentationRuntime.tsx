@@ -1,19 +1,22 @@
 import type { OptimizedBuffer, KeyEvent } from '@vybestack/opentui-core';
 import { RGBA } from '@vybestack/opentui-core';
 import { useKeyboard, useTimeline } from '@vybestack/opentui-react';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SlideDisplay } from '../components/SlideDisplay';
 import { ContentRenderer } from '../components/ContentRenderer';
 import { parseMarkdown } from '../features/markdown';
-import { createNavigator } from '../features/navigation/Navigator';
 import { createInputHandler } from '../features/navigation/InputHandler';
 import type { LoadedSlide } from '../features/slides/Types';
-import { createTransitionOrchestrator } from './TransitionOrchestrator';
 import { applyVisibilityMask, invertVisibilityMask } from '../features/transitions/Masking';
 import type { TransitionFrame } from '../features/transitions/TransitionTypes';
-import type { TransitionStepKind } from './TransitionOrchestrator';
-import { createCancelTransitionHandler } from './TransitionCancel';
+import { getTransition } from '../features/transitions/TransitionRegistry';
+import type { TransitionType } from '../features/transitions/TransitionTypes';
 import { LLXPRT_GREENSCREEN_THEME } from '../core/GreenscreenTheme';
+import {
+  createNavigationStateMachine,
+  type NavigationStateMachine,
+  type NavigationState,
+} from './NavigationStateMachine';
 
 export interface PresentationRuntimeProps {
   readonly slides: LoadedSlide[];
@@ -21,12 +24,6 @@ export interface PresentationRuntimeProps {
   readonly showFooter: boolean;
   readonly title?: string | null;
   readonly onQuit?: () => void;
-}
-
-interface RenderState {
-  readonly fromIndex: number;
-  readonly toIndex: number;
-  readonly intent: 'navigation' | 'quit';
 }
 
 const inputHandler = createInputHandler();
@@ -38,107 +35,97 @@ export function PresentationRuntime({
   title,
   onQuit,
 }: PresentationRuntimeProps): React.ReactNode {
-  const navigator = useMemo(() => createNavigator(slides.length), [slides.length]);
-  const orchestrator = useMemo(() => createTransitionOrchestrator(slides), [slides]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [transitionActive, setTransitionActive] = useState(false);
-  const [renderState, setRenderState] = useState<RenderState>({
-    fromIndex: 0,
-    toIndex: 0,
-    intent: 'navigation',
-  });
+  // Create state machine once
+  const machineRef = useRef<NavigationStateMachine | null>(null);
+  if (machineRef.current === null) {
+    machineRef.current = createNavigationStateMachine(slides);
+  }
+  const machine = machineRef.current;
+
+  // React state that tracks the machine state
+  const [navState, setNavState] = useState<NavigationState>(() => machine.getState());
+
+  // Transition animation state
   const [transitionFrame, setTransitionFrame] = useState<TransitionFrame | null>(null);
-  const [transitionKind, setTransitionKind] = useState<TransitionStepKind | null>(null);
-  const transitionStepRef = useRef(0);
-  const bufferWidthRef = useRef(1);
-  const bufferHeightRef = useRef(1);
+  const bufferWidthRef = useRef(80);
+  const bufferHeightRef = useRef(24);
   const animatedState = useMemo(() => ({ progress: 0 }), []);
 
-  const timeline = useTimeline({ duration: 1000, autoplay: false });
+  const timeline = useTimeline({ duration: 800, autoplay: false });
 
-  const updateTransition = useCallback(
-    (progress: number) => {
-      const plan = orchestrator.buildPlan(
-        renderState.fromIndex,
-        renderState.toIndex,
-        renderState.intent,
-      );
-      const step = plan.steps[transitionStepRef.current];
-      if (!step) {
-        return;
-      }
-      const frame = orchestrator.getFrame(
-        step,
-        progress,
-        bufferWidthRef.current,
-        bufferHeightRef.current,
-      );
-      setTransitionFrame(frame);
-      setTransitionKind(step.kind);
-      timeline.duration = orchestrator.getDuration(step);
+  // Dispatch and sync state
+  const dispatch = useCallback(
+    (event: Parameters<typeof machine.dispatch>[0]) => {
+      machine.dispatch(event);
+      setNavState({ ...machine.getState() });
     },
-    [orchestrator, renderState],
+    [machine],
   );
 
-  const advanceStep = useCallback(() => {
-    const plan = orchestrator.buildPlan(
-      renderState.fromIndex,
-      renderState.toIndex,
-      renderState.intent,
-    );
-    const nextIndex = transitionStepRef.current + 1;
-    if (nextIndex >= plan.steps.length) {
-      setTransitionActive(false);
-      setTransitionFrame(null);
-      setTransitionKind(null);
-      setCurrentIndex(renderState.toIndex);
-      return;
+  // Get current transition object
+  const getCurrentTransition = useCallback(() => {
+    const state = machine.getState();
+    if (!state.transitionName) return null;
+    try {
+      return getTransition(state.transitionName as TransitionType);
+    } catch {
+      return null;
     }
-    transitionStepRef.current = nextIndex;
-    const step = plan.steps[nextIndex];
-    setTransitionKind(step.kind);
-    timeline.restart();
-    timeline.play();
-  }, [orchestrator, renderState, timeline]);
+  }, [machine]);
 
-  const startTransition = useCallback(
-    (fromIndex: number, toIndex: number, intent: 'navigation' | 'quit') => {
-      const plan = orchestrator.buildPlan(fromIndex, toIndex, intent);
-      if (plan.steps.length === 0) {
-        setCurrentIndex(toIndex);
-        return;
-      }
+  // Update transition frame during animation
+  const updateTransitionFrame = useCallback(
+    (progress: number) => {
+      const transition = getCurrentTransition();
+      if (!transition) return;
 
-      setTransitionActive(true);
-      setRenderState({ fromIndex, toIndex, intent });
-      transitionStepRef.current = 0;
-      const firstStep = plan.steps[0];
-      setTransitionKind(firstStep?.kind ?? null);
-      timeline.restart();
-      timeline.play();
+      const frame = transition.getFrame(progress, bufferWidthRef.current, bufferHeightRef.current);
+      setTransitionFrame(frame);
     },
-    [orchestrator, timeline],
+    [getCurrentTransition],
   );
 
-  const cancelTransition = useCallback(() => {
-    const result = createCancelTransitionHandler({
-      transitionActive,
-      transitionFrame,
-      transitionKind,
-      renderState: { fromIndex: renderState.fromIndex, toIndex: renderState.toIndex },
-    });
+  // Handle transition completion
+  const onTransitionComplete = useCallback(() => {
+    dispatch({ type: 'TRANSITION_COMPLETE' });
+    setTransitionFrame(null);
+  }, [dispatch]);
 
-    setTransitionActive(result.transitionActive);
-    setTransitionFrame(result.transitionFrame);
-    setTransitionKind(result.transitionKind);
-    setCurrentIndex(result.currentIndex);
-  }, [renderState, transitionActive, transitionFrame, transitionKind]);
+  // Start animation when transition begins
+  useEffect(() => {
+    if (navState.isTransitioning && navState.transitionName) {
+      const transition = getCurrentTransition();
+      if (transition) {
+        timeline.duration = transition.getDuration();
+        animatedState.progress = 0;
+        timeline.restart();
+        timeline.play();
+      }
+    }
+  }, [navState.isTransitioning, navState.transitionName, timeline, getCurrentTransition]);
 
-  const clampIndex = useCallback(
-    (index: number): number => Math.max(0, Math.min(index, slides.length - 1)),
-    [slides.length],
-  );
+  // Setup timeline animation
+  useEffect(() => {
+    if (timeline.items.length === 0) {
+      timeline.add(
+        animatedState,
+        {
+          progress: 100,
+          duration: 800,
+          ease: 'linear',
+          onUpdate: (anim) => {
+            updateTransitionFrame(anim.progress);
+          },
+          onComplete: () => {
+            onTransitionComplete();
+          },
+        },
+        0,
+      );
+    }
+  }, [timeline, animatedState, updateTransitionFrame, onTransitionComplete]);
 
+  // Handle keyboard input
   useKeyboard((key: KeyEvent) => {
     if (key.eventType !== 'press') {
       return;
@@ -147,91 +134,69 @@ export function PresentationRuntime({
     const parse = inputHandler.parseKey(keyName);
     const action = parse.result.action;
 
-    if (transitionActive) {
-      cancelTransition();
-      if (action === 'backward') {
-        const targetIndex = Math.max(0, currentIndex - 1);
-        setCurrentIndex(targetIndex);
-      } else if (action === 'forward') {
-        const targetIndex = Math.min(slides.length - 1, currentIndex + 1);
-        if (targetIndex !== currentIndex) {
-          setCurrentIndex(targetIndex);
-        }
-      } else if (action === 'jump' && parse.result.jumpIndex !== undefined) {
-        setCurrentIndex(clampIndex(parse.result.jumpIndex));
-      }
-      return;
-    }
-
     if (action === 'forward') {
       key.preventDefault();
-      const targetIndex = currentIndex + 1;
-      if (targetIndex < slides.length) {
-        setCurrentIndex(targetIndex);
-      }
+      dispatch({ type: 'FORWARD' });
       return;
     }
     if (action === 'backward') {
       key.preventDefault();
-      const targetIndex = Math.max(0, currentIndex - 1);
-      setCurrentIndex(targetIndex);
+      dispatch({ type: 'BACKWARD' });
       return;
     }
     if (action === 'jump' && parse.result.jumpIndex !== undefined) {
       key.preventDefault();
-      setCurrentIndex(clampIndex(parse.result.jumpIndex));
+      dispatch({ type: 'JUMP', index: parse.result.jumpIndex });
       return;
     }
     if (action === 'quit') {
       key.preventDefault();
-      if (onQuit) {
-        onQuit();
-      }
-      process.exit(0);
+      dispatch({
+        type: 'QUIT',
+        onQuit: () => {
+          if (onQuit) {
+            onQuit();
+          }
+          process.exit(0);
+        },
+      });
+      return;
     }
   });
 
-  if (timeline.items.length === 0) {
-    timeline.add(
-      animatedState,
-      {
-        progress: 100,
-        duration: 1000,
-        ease: 'linear',
-        onUpdate: (anim) => {
-          updateTransition(anim.progress);
-        },
-        onComplete: () => {
-          advanceStep();
-        },
-      },
-      0,
-    );
-  }
-
-  const slide = slides[currentIndex];
+  // Get slide to display
+  const slide = slides[navState.displayIndex];
   const parseResult = parseMarkdown(slide.content);
 
+  // Render callbacks for transition effects
   const renderBefore = useCallback(
     (buffer: OptimizedBuffer, _deltaTime: number) => {
       bufferWidthRef.current = buffer.width;
       bufferHeightRef.current = buffer.height;
-      if (!transitionActive || !transitionFrame || transitionKind !== 'before') {
+
+      if (!navState.isTransitioning || !transitionFrame) {
         return;
       }
-      applyVisibilityMask(buffer, transitionFrame.mask, RGBA.fromHex('#000000'));
+
+      // "before" transition: new slide is being revealed (mask hides parts of new slide)
+      if (navState.transitionType === 'before') {
+        applyVisibilityMask(buffer, transitionFrame.mask, RGBA.fromHex('#000000'));
+      }
     },
-    [transitionActive, transitionFrame, transitionKind],
+    [navState.isTransitioning, navState.transitionType, transitionFrame],
   );
 
   const renderAfter = useCallback(
     (buffer: OptimizedBuffer, _deltaTime: number) => {
       bufferWidthRef.current = buffer.width;
       bufferHeightRef.current = buffer.height;
-      if (!transitionActive || !transitionFrame) {
+
+      if (!navState.isTransitioning || !transitionFrame) {
         return;
       }
-      if (transitionKind === 'after' || transitionKind === 'blank') {
+
+      // "after" transition: old slide is being hidden (mask reveals what's behind)
+      if (navState.transitionType === 'after') {
         applyVisibilityMask(
           buffer,
           invertVisibilityMask(transitionFrame.mask),
@@ -239,7 +204,7 @@ export function PresentationRuntime({
         );
       }
     },
-    [transitionActive, transitionFrame, transitionKind],
+    [navState.isTransitioning, navState.transitionType, transitionFrame],
   );
 
   const bg = LLXPRT_GREENSCREEN_THEME.colors.background;
@@ -254,7 +219,7 @@ export function PresentationRuntime({
       <SlideDisplay
         showHeader={showHeader}
         showFooter={showFooter}
-        slideNumber={currentIndex + 1}
+        slideNumber={navState.displayIndex + 1}
         totalSlides={slides.length}
         title={title}
       >
