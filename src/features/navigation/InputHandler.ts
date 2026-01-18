@@ -7,6 +7,8 @@ export type InputAction =
   | 'jump_mode'
   | 'help'
   | 'reload'
+  | 'toggle_header'
+  | 'toggle_footer'
   | 'unknown';
 
 export interface KeyParseResult {
@@ -29,6 +31,8 @@ const FORWARD_KEYS = new Set(['n', 'right', 'space', 'pagedown', 'down']);
 const BACKWARD_KEYS = new Set(['p', 'left', 'pageup', 'up']);
 const QUIT_KEYS = new Set(['q']);
 const RELOAD_KEYS = new Set(['r', 'R']);
+const TOGGLE_HEADER_KEYS = new Set(['h', 'H']);
+const TOGGLE_FOOTER_KEYS = new Set(['f', 'F']);
 const DIGIT_KEYS = new Set(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);
 
 export function createInputHandler(): InputHandler {
@@ -52,6 +56,14 @@ export function createInputHandler(): InputHandler {
 
     if (RELOAD_KEYS.has(key)) {
       return { result: { action: 'reload' }, newState: state };
+    }
+
+    if (TOGGLE_HEADER_KEYS.has(key)) {
+      return { result: { action: 'toggle_header' }, newState: state };
+    }
+
+    if (TOGGLE_FOOTER_KEYS.has(key)) {
+      return { result: { action: 'toggle_footer' }, newState: state };
     }
 
     if (key === 'escape') {

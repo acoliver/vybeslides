@@ -5,6 +5,8 @@ export interface ParsedArguments {
     showHeader: boolean;
     showFooter: boolean;
     render?: number;
+    disableHeader?: boolean;
+    disableFooter?: boolean;
   };
 }
 
@@ -53,6 +55,8 @@ interface OptionsParseSuccess {
     showHeader: boolean;
     showFooter: boolean;
     render?: number;
+    disableHeader?: boolean;
+    disableFooter?: boolean;
   };
 }
 
@@ -96,6 +100,26 @@ function parseOptions(args: string[]): OptionsParseResult {
 
     if (arg === '--render') {
       return parseRenderOption(optionState, allArgs[index + 1]);
+    }
+
+    if (arg === '--disable-header') {
+      return {
+        success: true,
+        options: {
+          ...optionState,
+          showHeader: false,
+        },
+      };
+    }
+
+    if (arg === '--disable-footer') {
+      return {
+        success: true,
+        options: {
+          ...optionState,
+          showFooter: false,
+        },
+      };
     }
 
     return {

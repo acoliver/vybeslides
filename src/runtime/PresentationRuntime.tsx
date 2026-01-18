@@ -31,13 +31,15 @@ const inputHandler = createInputHandler();
 
 export function PresentationRuntime({
   slides: initialSlides,
-  showHeader,
-  showFooter,
+  showHeader: initialShowHeader,
+  showFooter: initialShowFooter,
   title,
   onQuit,
   onReload,
 }: PresentationRuntimeProps): React.ReactNode {
   const [slides, setSlides] = useState<LoadedSlide[]>(initialSlides);
+  const [showHeader, setShowHeader] = useState(initialShowHeader);
+  const [showFooter, setShowFooter] = useState(initialShowFooter);
   // Create state machine once
   const machineRef = useRef<NavigationStateMachine | null>(null);
   if (machineRef.current === null) {
@@ -168,6 +170,16 @@ export function PresentationRuntime({
     if (action === 'reload') {
       key.preventDefault();
       dispatch({ type: 'RELOAD' });
+      return;
+    }
+    if (action === 'toggle_header') {
+      key.preventDefault();
+      setShowHeader((prev) => !prev);
+      return;
+    }
+    if (action === 'toggle_footer') {
+      key.preventDefault();
+      setShowFooter((prev) => !prev);
       return;
     }
   });

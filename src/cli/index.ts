@@ -22,14 +22,21 @@ Usage:
   vybeslides <presentation-dir> [options]
 
 Options:
-  --header off    Disable header bar
-  --footer off    Disable footer bar
-  --render <num>  Render slide <num> to stdout (headless mode)
-  --help, -h      Show this help message
+  --header off       Disable header bar (deprecated, use --disable-header)
+  --footer off       Disable footer bar (deprecated, use --disable-footer)
+  --disable-header   Disable header bar
+  --disable-footer   Disable footer bar
+  --render <num>     Render slide <num> to stdout (headless mode)
+  --help, -h         Show this help message
+
+Keyboard shortcuts:
+  h                  Toggle header bar
+  f                  Toggle footer bar
+  r                  Reload current slide from disk
 
 Example:
   vybeslides ./my-presentation
-  vybeslides ./slides --footer off
+  vybeslides ./slides --disable-footer
   vybeslides ./slides --render 5 > slide5.txt
 `;
 

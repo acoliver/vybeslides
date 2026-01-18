@@ -94,3 +94,24 @@ describe('parseArguments - render option', () => {
     expect(result.success && result.options.render).toBe(3);
   });
 });
+
+describe('parseArguments - disable options', () => {
+  it('should parse --disable-header', () => {
+    const result = parseArguments(['./presentation', '--disable-header']);
+    expect(result.success).toBe(true);
+    expect(result.success && result.options.showHeader).toBe(false);
+  });
+
+  it('should parse --disable-footer', () => {
+    const result = parseArguments(['./presentation', '--disable-footer']);
+    expect(result.success).toBe(true);
+    expect(result.success && result.options.showFooter).toBe(false);
+  });
+
+  it('should parse both --disable-header and --disable-footer', () => {
+    const result = parseArguments(['./presentation', '--disable-header', '--disable-footer']);
+    expect(result.success).toBe(true);
+    expect(result.success && result.options.showHeader).toBe(false);
+    expect(result.success && result.options.showFooter).toBe(false);
+  });
+});

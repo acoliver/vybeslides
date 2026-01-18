@@ -60,13 +60,15 @@ my-presentation/
 ### slides.txt Format
 
 ```
+# My Presentation Title
 01-title.md
 02-agenda.md
 03-content.md
 04-end.md
 ```
 
-Each line is a filename for a slide, in presentation order.
+- Lines starting with `#` set the presentation title (shown in header bar)
+- Each other line is a filename for a slide, in presentation order
 
 ### Slide Markdown
 
@@ -109,16 +111,24 @@ Plus ASCII art blocks:
 | `p`, `←`, `↑`, `PageUp` | Previous slide |
 | `0-9` | Jump to slide (0-indexed) |
 | `:10`, `:15`, etc. | Jump to slide 10, 15, etc. |
+| `r` | Reload current slide from disk |
+| `h` | Toggle header bar |
+| `f` | Toggle footer bar |
 | `q`, `Escape` | Quit |
 
 ### CLI Options
 
 ```bash
-vybeslides ./presentation [--header off] [--footer off]
+vybeslides ./presentation [options]
 ```
 
-- `--header off` — Hide the header bar
-- `--footer off` — Hide the footer bar
+| Option | Description |
+|--------|-------------|
+| `--disable-header` | Start with header bar hidden |
+| `--disable-footer` | Start with footer bar hidden |
+| `--render <num>` | Render slide `<num>` to stdout (headless mode) |
+| `--header off` | (deprecated) Hide header bar |
+| `--footer off` | (deprecated) Hide footer bar |
 
 ## Development
 

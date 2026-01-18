@@ -142,3 +142,33 @@ describe('InputHandler - Reload Keys', () => {
     expect(result.action).toBe('reload');
   });
 });
+
+describe('InputHandler - Toggle Keys', () => {
+  it('should recognize h as toggle_header', () => {
+    const handler = createInputHandler();
+    const { result } = handler.parseKey('h');
+
+    expect(result.action).toBe('toggle_header');
+  });
+
+  it('should recognize H as toggle_header', () => {
+    const handler = createInputHandler();
+    const { result } = handler.parseKey('H');
+
+    expect(result.action).toBe('toggle_header');
+  });
+
+  it('should recognize f as toggle_footer', () => {
+    const handler = createInputHandler();
+    const { result } = handler.parseKey('f');
+
+    expect(result.action).toBe('toggle_footer');
+  });
+
+  it('should recognize F as toggle_footer', () => {
+    const handler = createInputHandler();
+    const { result } = handler.parseKey('F');
+
+    expect(result.action).toBe('toggle_footer');
+  });
+});
