@@ -44,7 +44,23 @@ function parseBulletList(
   const itemPattern = /^[-*]\s+(.*)$/;
 
   while (i < lines.length) {
-    const match = itemPattern.exec(lines[i]);
+    const line = lines[i];
+
+    // Allow one blank line within the list, but check if next non-blank is a bullet
+    if (line.trim() === '') {
+      // Look ahead to see if there's another bullet item
+      let nextNonBlank = i + 1;
+      while (nextNonBlank < lines.length && lines[nextNonBlank].trim() === '') {
+        nextNonBlank++;
+      }
+      if (nextNonBlank < lines.length && itemPattern.exec(lines[nextNonBlank])) {
+        i++;
+        continue;
+      }
+      break;
+    }
+
+    const match = itemPattern.exec(line);
     if (!match?.[1]) {
       break;
     }
