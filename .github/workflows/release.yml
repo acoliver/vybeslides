@@ -1,0 +1,92 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The version to release (e.g., 0.1.0)'
+        required: true
+        type: string
+      dry_run:
+        description: 'Run a dry-run of the release process'
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 'latest'
+
+      - name: Install Dependencies
+        run: bun install
+
+      - name: Run Tests
+        run: bun test
+
+      - name: Run Lint
+        run: bun run lint
+
+      - name: Run Typecheck
+        run: bun run typecheck
+
+      - name: Configure Git User
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Update package version
+        run: |
+          npm version ${{ inputs.version }} --no-git-tag-version --allow-same-version
+
+      - name: Commit version bump
+        run: |
+          git add package.json
+          if git diff --cached --quiet; then
+            echo "No version changes detected"
+          else
+            git commit -m "chore(release): v${{ inputs.version }}"
+          fi
+          if [[ "${{ inputs.dry_run }}" == "false" ]]; then
+            git push
+          fi
+
+      - name: Configure npm for publishing
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org/'
+          scope: '@vybestack'
+
+      - name: Publish @vybestack/vybeslides
+        run: |
+          if [[ "${{ inputs.dry_run }}" == "true" ]]; then
+            echo "Dry run - would publish version ${{ inputs.version }}"
+            npm publish --dry-run
+          else
+            npm publish --access public
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        if: ${{ inputs.dry_run == false }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create v${{ inputs.version }} \
+            --title "Release v${{ inputs.version }}" \
+            --generate-notes

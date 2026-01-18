@@ -1,23 +1,19 @@
 # VybeSlides
 
-Retro terminal-based slide presentations with LLXPRT greenscreen aesthetics.
+Create terminal slide presentations.
 
 ```ascii
-     ░██        ░██        ░██    ░██░█████████ ░█████████░██████████
-░██  ░██        ░██         ░██  ░██ ░██     ░██░██     ░██   ░██
- ░██ ░██        ░██          ░██░██  ░██     ░██░██     ░██   ░██
-  ░██░██        ░██           ░███   ░█████████ ░█████████    ░██
- ░██ ░██        ░██          ░██░██  ░██        ░██   ░██     ░██
-░██  ░██        ░██         ░██  ░██ ░██        ░██    ░██    ░██
-     ░██████████░██████████░██    ░██░██        ░██     ░██   ░██
+ ██    ██ ██    ██ ██████  ███████ ███████ ██      ██ ██████  ███████ ███████
+ ██    ██  ██  ██  ██   ██ ██      ██      ██      ██ ██   ██ ██      ██
+ ██    ██   ████   ██████  █████   ███████ ██      ██ ██   ██ █████   ███████
+  ██  ██     ██    ██   ██ ██           ██ ██      ██ ██   ██ ██           ██
+   ████      ██    ██████  ███████ ███████ ███████ ██ ██████  ███████ ███████
 ```
 
 ## Features
 
-- **Greenscreen theme** — Classic `#6a9955` green on black
 - **Markdown-driven** — Write slides in familiar markdown
 - **ASCII art support** — Embed ASCII art with code fences
-- **Retro transitions** — Diagonal wipes, TV on/off effects (coming soon)
 - **Keyboard navigation** — No mouse required
 
 ## Installation
@@ -25,15 +21,20 @@ Retro terminal-based slide presentations with LLXPRT greenscreen aesthetics.
 Requires [Bun](https://bun.sh) runtime.
 
 ```bash
-# Clone the repository
-git clone git@github.com:acoliver/vybeslides.git
-cd vybeslides
+# Install bun (if not already installed)
+curl -fsSL https://bun.sh/install | bash
 
-# Install dependencies
-bun install
+# Install vybeslides globally
+bun install -g @vybestack/vybeslides
 
 # Run a presentation
-bun src/cli/index.ts ./examples/basic
+vybeslides ./my-presentation
+```
+
+Or run directly without installing:
+
+```bash
+bunx @vybestack/vybeslides ./my-presentation
 ```
 
 ## Usage
@@ -56,23 +57,13 @@ my-presentation/
 ### slides.txt Format
 
 ```
-01-title.md before:tvon
-02-agenda.md before:diagonal
-03-content.md before:leftwipe
-04-end.md after:tvoff
+01-title.md
+02-agenda.md
+03-content.md
+04-end.md
 ```
 
-Each line: `filename.md` with optional `before:` and `after:` transition directives.
-
-### Available Transitions
-
-- `diagonal` — Top-left to bottom-right wipe
-- `leftwipe` — Left edge sweeps right
-- `rightwipe` — Right edge sweeps left
-- `topwipe` — Top edge sweeps down
-- `bottomwipe` — Bottom edge sweeps up
-- `tvon` — Old tube TV turning on effect
-- `tvoff` — Old tube TV turning off effect
+Each line is a filename for a slide, in presentation order.
 
 ### Slide Markdown
 
@@ -129,6 +120,13 @@ vybeslides ./presentation [--header off] [--footer off]
 ## Development
 
 ```bash
+# Clone the repository
+git clone https://github.com/acoliver/vybeslides.git
+cd vybeslides
+
+# Install dependencies
+bun install
+
 # Run tests
 bun test
 
@@ -154,4 +152,4 @@ Best experienced in modern terminals with true color support:
 
 ## License
 
-MIT
+Apache-2.0
