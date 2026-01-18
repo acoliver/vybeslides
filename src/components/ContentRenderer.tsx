@@ -70,8 +70,12 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
   const accent = LLXPRT_GREENSCREEN_THEME.colors.accent;
 
   return (
-    <box style={{ flexDirection: 'column', gap: 1 }}>
+    <box style={{ flexDirection: 'column' }}>
       {elements.map((element, index) => {
+        // Determine if next element is a table (to suppress bottom margin on headers before tables)
+        const nextElement = elements[index + 1];
+        const nextIsTable = nextElement?.type === 'table';
+
         if (element.type === 'header') {
           const text = element.content;
           // Use OpenTUI's code component with markdown syntax highlighting
@@ -79,8 +83,10 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
           const prefix = '#'.repeat(element.level) + ' ';
           // Add top margin to separate headers from preceding content (except first element)
           const marginTop = index > 0 ? 1 : 0;
+          // Only add bottom margin for H1, and not if next element is a table
+          const marginBottom = element.level === 1 && !nextIsTable ? 1 : 0;
           return (
-            <box key={index} style={{ marginTop, marginBottom: element.level === 1 ? 1 : 0 }}>
+            <box key={index} style={{ marginTop, marginBottom }}>
               <code
                 filetype="markdown"
                 content={prefix + text}
