@@ -82,8 +82,9 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
           // Use OpenTUI's code component with markdown syntax highlighting
           // Headers get bold + accent color via tree-sitter
           const prefix = '#'.repeat(element.level) + ' ';
-          // Add top margin to separate headers from preceding content (except first element)
-          const marginTop = index > 0 ? 1 : 0;
+          // H1 gets more spacing, H2+ gets less
+          // Only add top margin if not the first element
+          const marginTop = index > 0 && element.level === 1 ? 1 : 0;
           // Only add bottom margin for H1, and not if next element is a table or code block
           const marginBottom = element.level === 1 && !nextIsTableOrCode ? 1 : 0;
           return (
