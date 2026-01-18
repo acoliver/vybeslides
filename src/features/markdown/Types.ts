@@ -11,9 +11,14 @@ export interface Paragraph {
   content: string;
 }
 
+export interface BulletListItem {
+  content: string;
+  children?: BulletListItem[];
+}
+
 export interface BulletList {
   type: 'bullet_list';
-  items: string[];
+  items: BulletListItem[];
 }
 
 export interface NumberedList {

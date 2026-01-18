@@ -27,9 +27,11 @@ describe('ContentRenderer - paragraphs', () => {
 
 describe('ContentRenderer - lists', () => {
   it('should render bullet list items', () => {
-    const elements: MarkdownElement[] = [{ type: 'bullet_list', items: ['Item 1', 'Item 2'] }];
+    const elements: MarkdownElement[] = [
+      { type: 'bullet_list', items: [{ content: 'Item 1' }, { content: 'Item 2' }] },
+    ];
     const { getByText } = render(<ContentRenderer elements={elements} />);
-    expect(getByText('• Item 1')).toBeTruthy();
+    expect(getByText('Item 1')).toBeTruthy();
   });
 
   it('should render numbered list items', () => {

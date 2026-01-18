@@ -4,6 +4,7 @@ import type {
   Header,
   Paragraph,
   BulletList,
+  BulletListItem,
   NumberedList,
   CodeBlock,
   AsciiArt,
@@ -11,7 +12,7 @@ import type {
   Blockquote,
 } from './Types';
 
-const BULLET_ITEM_PATTERN = /^[-*]\s/;
+const BULLET_ITEM_PATTERN = /^(\s*)[-*]\s/;
 const NUMBERED_ITEM_PATTERN = /^\d+\.\s/;
 const TABLE_ROW_PATTERN = /^\|.*\|$/;
 const TABLE_SEPARATOR_PATTERN = /^\|[\s-:|]+\|$/;
@@ -39,32 +40,50 @@ function parseBulletList(
   lines: string[],
   startIndex: number,
 ): { element: BulletList; nextIndex: number } {
-  let items: string[] = [];
+  const items: BulletListItem[] = [];
   let i = startIndex;
-  const itemPattern = /^[-*]\s+(.*)$/;
+  const topLevelPattern = /^[-*]\s+(.*)$/;
+  const subItemPattern = /^(\s{2,})[-*]\s+(.*)$/;
 
   while (i < lines.length) {
     const line = lines[i];
 
-    // Allow one blank line within the list, but check if next non-blank is a bullet
+    // Skip blank lines within the list
     if (line.trim() === '') {
-      // Look ahead to see if there's another bullet item
+      // Look ahead to see if there's another bullet item (top-level or sub)
       let nextNonBlank = i + 1;
       while (nextNonBlank < lines.length && lines[nextNonBlank].trim() === '') {
         nextNonBlank++;
       }
-      if (nextNonBlank < lines.length && itemPattern.exec(lines[nextNonBlank])) {
+      if (
+        nextNonBlank < lines.length &&
+        (topLevelPattern.exec(lines[nextNonBlank]) || subItemPattern.exec(lines[nextNonBlank]))
+      ) {
         i++;
         continue;
       }
       break;
     }
 
-    const match = itemPattern.exec(line);
-    if (!match?.[1]) {
+    // Check for sub-item first (indented bullet)
+    const subMatch = subItemPattern.exec(line);
+    if (subMatch?.[2]) {
+      // Add as child to last top-level item
+      if (items.length > 0) {
+        const lastItem = items[items.length - 1];
+        lastItem.children ??= [];
+        lastItem.children.push({ content: subMatch[2] });
+      }
+      i++;
+      continue;
+    }
+
+    // Check for top-level item
+    const topMatch = topLevelPattern.exec(line);
+    if (!topMatch?.[1]) {
       break;
     }
-    items = [...items, match[1]];
+    items.push({ content: topMatch[1] });
     i++;
   }
 
