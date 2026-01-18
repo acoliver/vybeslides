@@ -104,36 +104,41 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
           );
         }
         if (element.type === 'bullet_list') {
-          return (
-            <box key={index} style={{ flexDirection: 'column' }}>
-              {element.items.map((item, itemIndex) => (
-                <box key={itemIndex} style={{ flexDirection: 'column' }}>
-                  <box style={{ flexDirection: 'row' }}>
-                    <text fg={fg}>• </text>
+          const renderItems: React.ReactNode[] = [];
+          element.items.forEach((item, itemIndex) => {
+            renderItems.push(
+              <box key={`item-${itemIndex}`} style={{ flexDirection: 'row' }}>
+                <text fg={fg}>• </text>
+                <code
+                  filetype="markdown"
+                  content={item.content}
+                  drawUnstyledText={false}
+                  syntaxStyle={markdownSyntaxStyle}
+                />
+              </box>,
+            );
+            if (item.children && item.children.length > 0) {
+              item.children.forEach((child, childIndex) => {
+                renderItems.push(
+                  <box
+                    key={`item-${itemIndex}-child-${childIndex}`}
+                    style={{ flexDirection: 'row', marginLeft: 2 }}
+                  >
+                    <text fg={fg}>- </text>
                     <code
                       filetype="markdown"
-                      content={item.content}
+                      content={child.content}
                       drawUnstyledText={false}
                       syntaxStyle={markdownSyntaxStyle}
                     />
-                  </box>
-                  {item.children && item.children.length > 0 && (
-                    <box style={{ flexDirection: 'column', marginLeft: 2 }}>
-                      {item.children.map((child, childIndex) => (
-                        <box key={childIndex} style={{ flexDirection: 'row' }}>
-                          <text fg={fg}>- </text>
-                          <code
-                            filetype="markdown"
-                            content={child.content}
-                            drawUnstyledText={false}
-                            syntaxStyle={markdownSyntaxStyle}
-                          />
-                        </box>
-                      ))}
-                    </box>
-                  )}
-                </box>
-              ))}
+                  </box>,
+                );
+              });
+            }
+          });
+          return (
+            <box key={index} style={{ flexDirection: 'column' }}>
+              {renderItems}
             </box>
           );
         }
