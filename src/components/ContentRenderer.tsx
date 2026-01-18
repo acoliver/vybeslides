@@ -1,6 +1,7 @@
 import type { MarkdownElement } from '../features/markdown/Types';
 import { LLXPRT_GREENSCREEN_THEME } from '../core/GreenscreenTheme';
 import { SyntaxStyle, RGBA } from '@vybestack/opentui-core';
+import { computeSpacing } from './spacing';
 
 // Create a greenscreen markdown syntax style
 function createMarkdownSyntaxStyle() {
@@ -72,32 +73,16 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
   return (
     <box style={{ flexDirection: 'column' }}>
       {elements.map((element, index) => {
-        // Determine if next element is a table or code_block (to suppress bottom margin)
-        const nextElement = elements[index + 1];
-        const nextIsTableOrCode =
-          nextElement?.type === 'table' || nextElement?.type === 'code_block';
-
-        // Check previous element for spacing decisions
-        const prevElement = elements[index - 1];
-        const prevIsList =
-          prevElement?.type === 'bullet_list' || prevElement?.type === 'numbered_list';
-        const prevIsCodeBlock = prevElement?.type === 'code_block';
+        // Use the centralized spacing logic
+        const spacing = computeSpacing(elements, index);
 
         if (element.type === 'header') {
           const text = element.content;
           // Use OpenTUI's code component with markdown syntax highlighting
           // Headers get bold + accent color via tree-sitter
           const prefix = '#'.repeat(element.level) + ' ';
-          // H1 always gets top margin (if not first)
-          // H2+ only gets margin if after a list, code block, or paragraph (not after another header)
-          const prevIsHeader = prevElement?.type === 'header';
-          const marginTop =
-            index > 0 && (element.level === 1 || (!prevIsHeader && (prevIsList || prevIsCodeBlock)))
-              ? 1
-              : 0;
-          // No bottom margin - let content follow directly
           return (
-            <box key={index} style={{ marginTop }}>
+            <box key={index} style={{ marginTop: spacing.marginTop }}>
               <code
                 filetype="markdown"
                 content={prefix + text}
@@ -108,11 +93,9 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
           );
         }
         if (element.type === 'paragraph') {
-          // Add top margin if after a list or code block
-          const marginTop = prevIsList || prevIsCodeBlock ? 1 : 0;
           // Use code component to get markdown inline formatting (bold, italic, etc.)
           return (
-            <box key={index} style={{ marginTop }}>
+            <box key={index} style={{ marginTop: spacing.marginTop }}>
               <code
                 filetype="markdown"
                 content={element.content}
@@ -156,14 +139,14 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
             }
           });
           return (
-            <box key={index} style={{ flexDirection: 'column' }}>
+            <box key={index} style={{ flexDirection: 'column', marginTop: spacing.marginTop }}>
               {renderItems}
             </box>
           );
         }
         if (element.type === 'numbered_list') {
           return (
-            <box key={index} style={{ flexDirection: 'column' }}>
+            <box key={index} style={{ flexDirection: 'column', marginTop: spacing.marginTop }}>
               {element.items.map((item, itemIndex) => (
                 <text key={itemIndex} fg={fg}>
                   {itemIndex + 1}. {item}
@@ -187,7 +170,11 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
         if (element.type === 'code_block') {
           const lines = element.content.split('\n');
           return (
-            <box key={index} border style={{ borderColor: fg, padding: 1 }}>
+            <box
+              key={index}
+              border
+              style={{ borderColor: fg, padding: 1, marginTop: spacing.marginTop }}
+            >
               {lines.map((line, lineIndex) => (
                 <text key={lineIndex} fg={fg}>
                   {line}
@@ -218,7 +205,7 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
           const bottomBorder = '└─' + columnWidths.map((w) => '─'.repeat(w)).join('─┴─') + '─┘';
 
           return (
-            <box key={index} style={{ flexDirection: 'column' }}>
+            <box key={index} style={{ flexDirection: 'column', marginTop: spacing.marginTop }}>
               <text fg={fg}>{topBorder}</text>
               <text fg={accent}>{formatRow(element.headers)}</text>
               <text fg={fg}>{headerSeparator}</text>
@@ -233,9 +220,9 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
         }
         if (element.type === 'blockquote') {
           return (
-            <text key={index} fg={fg}>
-              &gt; {element.content}
-            </text>
+            <box key={index} style={{ marginTop: spacing.marginTop }}>
+              <text fg={fg}>&gt; {element.content}</text>
+            </box>
           );
         }
         return null;
