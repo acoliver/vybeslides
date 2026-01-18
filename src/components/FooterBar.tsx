@@ -19,7 +19,7 @@ export function FooterBar(): React.ReactNode {
         backgroundColor: bg,
       }}
     >
-      <text fg={fg}>←/↑ prev | →/↓ next | ? help | q quit</text>
+      <text fg={fg}>←/↑ prev | →/↓ next | r reload | ? help | q quit</text>
       <text fg={fg}>{time}</text>
     </box>
   );
