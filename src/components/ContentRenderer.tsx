@@ -1,5 +1,65 @@
 import type { MarkdownElement } from '../features/markdown/Types';
 import { LLXPRT_GREENSCREEN_THEME } from '../core/GreenscreenTheme';
+import { SyntaxStyle, RGBA } from '@vybestack/opentui-core';
+
+// Create a greenscreen markdown syntax style
+function createMarkdownSyntaxStyle() {
+  const accent = RGBA.fromHex(LLXPRT_GREENSCREEN_THEME.colors.accent);
+  const fg = RGBA.fromHex(LLXPRT_GREENSCREEN_THEME.colors.foreground);
+
+  return SyntaxStyle.fromTheme([
+    {
+      scope: ['default'],
+      style: { foreground: fg },
+    },
+    {
+      scope: ['markup.heading'],
+      style: { foreground: accent, bold: true },
+    },
+    {
+      scope: ['markup.heading.1'],
+      style: { foreground: accent, bold: true },
+    },
+    {
+      scope: ['markup.heading.2'],
+      style: { foreground: accent, bold: true },
+    },
+    {
+      scope: ['markup.heading.3'],
+      style: { foreground: accent, bold: true },
+    },
+    {
+      scope: ['markup.heading.4'],
+      style: { foreground: accent, bold: true },
+    },
+    {
+      scope: ['markup.heading.5'],
+      style: { foreground: accent, bold: true },
+    },
+    {
+      scope: ['markup.heading.6'],
+      style: { foreground: accent, bold: true },
+    },
+    {
+      scope: ['markup.bold', 'markup.strong'],
+      style: { foreground: accent, bold: true },
+    },
+    {
+      scope: ['markup.italic'],
+      style: { foreground: fg, italic: true },
+    },
+    {
+      scope: ['markup.raw', 'markup.inline.raw'],
+      style: { foreground: accent },
+    },
+    {
+      scope: ['markup.link'],
+      style: { foreground: accent, underline: true },
+    },
+  ]);
+}
+
+const markdownSyntaxStyle = createMarkdownSyntaxStyle();
 
 export interface ContentRendererProps {
   readonly elements: MarkdownElement[];
@@ -14,35 +74,18 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
       {elements.map((element, index) => {
         if (element.type === 'header') {
           const text = element.content;
-          if (element.level === 1) {
-            // H1 gets huge ASCII font
-            return (
-              <box key={index} style={{ marginBottom: 1 }}>
-                <ascii-font text={text.toUpperCase()} font="huge" color={accent} />
-              </box>
-            );
-          }
-          if (element.level === 2) {
-            // H2 gets block ASCII font
-            return (
-              <box key={index} style={{ marginBottom: 1 }}>
-                <ascii-font text={text.toUpperCase()} font="block" color={accent} />
-              </box>
-            );
-          }
-          if (element.level === 3) {
-            // H3 gets tiny ASCII font
-            return (
-              <box key={index}>
-                <ascii-font text={text.toUpperCase()} font="tiny" color={accent} />
-              </box>
-            );
-          }
-          // H4+ regular text
+          // Use OpenTUI's code component with markdown syntax highlighting
+          // Headers get bold + accent color via tree-sitter
+          const prefix = '#'.repeat(element.level) + ' ';
           return (
-            <text key={index} fg={accent}>
-              {text}
-            </text>
+            <box key={index} style={{ marginBottom: element.level === 1 ? 1 : 0 }}>
+              <code
+                filetype="markdown"
+                content={prefix + text}
+                drawUnstyledText={false}
+                syntaxStyle={markdownSyntaxStyle}
+              />
+            </box>
           );
         }
         if (element.type === 'paragraph') {
