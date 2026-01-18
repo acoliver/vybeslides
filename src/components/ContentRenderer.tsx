@@ -50,7 +50,7 @@ function createMarkdownSyntaxStyle() {
     },
     {
       scope: ['markup.raw', 'markup.inline.raw'],
-      style: { foreground: accent },
+      style: { foreground: fg },
     },
     {
       scope: ['markup.link'],
