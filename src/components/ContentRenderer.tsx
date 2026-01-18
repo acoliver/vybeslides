@@ -166,7 +166,7 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
           return (
             <box key={index} style={{ flexDirection: 'column' }}>
               {lines.map((line, lineIndex) => (
-                <text key={lineIndex} fg={accent}>
+                <text key={lineIndex} fg={fg}>
                   {line}
                 </text>
               ))}
