@@ -50,3 +50,8 @@ export interface ValidationResult {
   error?: ValidationError;
   entries?: SlideEntry[];
 }
+
+export interface PresentationConfig {
+  title: string | null;
+  entries: SlideEntry[];
+}

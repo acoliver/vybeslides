@@ -3,11 +3,13 @@ import { LLXPRT_GREENSCREEN_THEME } from '../core/GreenscreenTheme';
 export interface HeaderBarProps {
   readonly slideNumber: number;
   readonly totalSlides: number;
+  readonly title?: string | null;
 }
 
-export function HeaderBar({ slideNumber, totalSlides }: HeaderBarProps): React.ReactNode {
+export function HeaderBar({ slideNumber, totalSlides, title }: HeaderBarProps): React.ReactNode {
   const fg = LLXPRT_GREENSCREEN_THEME.colors.foreground;
   const bg = LLXPRT_GREENSCREEN_THEME.colors.background;
+  const displayTitle = title ?? 'VybeSlides';
 
   return (
     <box
@@ -21,7 +23,7 @@ export function HeaderBar({ slideNumber, totalSlides }: HeaderBarProps): React.R
         padding: 1,
       }}
     >
-      <text fg={fg}>VybeSlides</text>
+      <text fg={fg}>{displayTitle}</text>
       <text fg={fg}>
         [{slideNumber}/{totalSlides}]
       </text>

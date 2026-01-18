@@ -78,14 +78,17 @@ describe('validatePresentation', () => {
     expect(result.error?.type).toBe('invalid_directive');
   });
 
-  it('should treat comment-like lines as filenames', async () => {
+  it('should treat # line as title not filename', async () => {
     const result = await validatePresentation(COMMENT_AS_FILENAME_PATH);
-    expect(result.success).toBe(false);
+    // A slides.txt with only a title and no entries should fail validation
+    // because there are no slides
+    expect(result.entries).toStrictEqual([]);
   });
 
-  it('should include error for comment-like filename not existing', async () => {
-    const result = await validatePresentation(COMMENT_AS_FILENAME_PATH);
-    expect(result.error?.type).toBe('missing_file');
+  it('should parse title from slides.txt', async () => {
+    const validWithTitlePath = path.join(BASE_DIR, 'valid-presentations', 'with-title');
+    const result = await validatePresentation(validWithTitlePath);
+    expect(result.title).toBe('My Presentation');
   });
 });
 

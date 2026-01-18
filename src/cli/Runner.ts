@@ -43,6 +43,7 @@ export async function runPresentation(options: RunnerOptions): Promise<RunnerRes
     showHeader: options.showHeader,
     showFooter: options.showFooter,
     slides,
+    title: validationResult.title,
   });
 
   return {
@@ -55,6 +56,7 @@ interface StartRuntimeOptions {
   showHeader: boolean;
   showFooter: boolean;
   slides: LoadedSlide[];
+  title?: string | null;
 }
 
 async function startRuntime(options: StartRuntimeOptions): Promise<void> {
@@ -79,6 +81,7 @@ async function startRuntime(options: StartRuntimeOptions): Promise<void> {
     showHeader: options.showHeader,
     showFooter: options.showFooter,
     slides: options.slides,
+    title: options.title,
     onQuit: cleanup,
   });
 

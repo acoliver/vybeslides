@@ -8,6 +8,7 @@ export interface SlideDisplayProps {
   readonly showFooter?: boolean;
   readonly slideNumber?: number;
   readonly totalSlides?: number;
+  readonly title?: string | null;
 }
 
 export function SlideDisplay({
@@ -16,12 +17,15 @@ export function SlideDisplay({
   showFooter = false,
   slideNumber = 1,
   totalSlides = 1,
+  title,
 }: SlideDisplayProps): React.ReactNode {
   const bg = LLXPRT_GREENSCREEN_THEME.colors.background;
 
   return (
     <box style={{ flexDirection: 'column', flexGrow: 1, backgroundColor: bg }}>
-      {showHeader && <HeaderBar slideNumber={slideNumber} totalSlides={totalSlides} />}
+      {showHeader && (
+        <HeaderBar slideNumber={slideNumber} totalSlides={totalSlides} title={title} />
+      )}
       <box style={{ flexGrow: 1, padding: 1 }}>{children}</box>
       {showFooter && <FooterBar />}
     </box>

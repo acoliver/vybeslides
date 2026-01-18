@@ -4,7 +4,13 @@ import { parseSlidesText } from './SlidesParser';
 import type { ValidationResult, SlideEntry, TransitionName } from './Types';
 import { TRANSITION_NAME_SET } from './Types';
 
-export async function validatePresentation(presentationDir: string): Promise<ValidationResult> {
+export interface ExtendedValidationResult extends ValidationResult {
+  title?: string | null;
+}
+
+export async function validatePresentation(
+  presentationDir: string,
+): Promise<ExtendedValidationResult> {
   const slidesTxtPath = path.join(presentationDir, 'slides.txt');
 
   try {
@@ -20,7 +26,8 @@ export async function validatePresentation(presentationDir: string): Promise<Val
   }
 
   const content = await fs.readFile(slidesTxtPath, 'utf-8');
-  const entries = parseSlidesText(content);
+  const config = parseSlidesText(content);
+  const entries = config.entries;
 
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i];
@@ -82,6 +89,7 @@ export async function validatePresentation(presentationDir: string): Promise<Val
   return {
     success: true,
     entries,
+    title: config.title,
   };
 }
 

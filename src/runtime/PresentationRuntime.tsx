@@ -19,6 +19,7 @@ export interface PresentationRuntimeProps {
   readonly slides: LoadedSlide[];
   readonly showHeader: boolean;
   readonly showFooter: boolean;
+  readonly title?: string | null;
   readonly onQuit?: () => void;
 }
 
@@ -34,6 +35,7 @@ export function PresentationRuntime({
   slides,
   showHeader,
   showFooter,
+  title,
   onQuit,
 }: PresentationRuntimeProps): React.ReactNode {
   const navigator = useMemo(() => createNavigator(slides.length), [slides.length]);
@@ -254,6 +256,7 @@ export function PresentationRuntime({
         showFooter={showFooter}
         slideNumber={currentIndex + 1}
         totalSlides={slides.length}
+        title={title}
       >
         <ContentRenderer elements={parseResult.elements} />
       </SlideDisplay>

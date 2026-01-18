@@ -1,4 +1,4 @@
-import type { SlideEntry } from './Types';
+import type { SlideEntry, PresentationConfig } from './Types';
 
 export function parseSlideEntry(line: string): SlideEntry {
   const parts = line.trim().split(/\s+/);
@@ -55,10 +55,24 @@ export function parseSlideEntry(line: string): SlideEntry {
   };
 }
 
-export function parseSlidesText(content: string): SlideEntry[] {
-  return content
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0)
-    .map((line) => parseSlideEntry(line));
+export function parseSlidesText(content: string): PresentationConfig {
+  const lines = content.split('\n').map((line) => line.trim());
+
+  let title: string | null = null;
+  const entryLines: string[] = [];
+
+  for (const line of lines) {
+    if (line.length === 0) continue;
+
+    // Check for title line (# Title)
+    if (line.startsWith('# ') && title === null) {
+      title = line.substring(2).trim();
+    } else {
+      entryLines.push(line);
+    }
+  }
+
+  const entries = entryLines.map((line) => parseSlideEntry(line));
+
+  return { title, entries };
 }

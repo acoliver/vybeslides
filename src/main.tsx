@@ -7,6 +7,7 @@ export interface AppOptions {
   showHeader: boolean;
   showFooter: boolean;
   slides: LoadedSlide[];
+  title?: string | null;
   onQuit?: () => void;
 }
 
@@ -16,6 +17,7 @@ export function createApp(options: AppOptions): React.ReactNode {
       slides={options.slides}
       showHeader={options.showHeader}
       showFooter={options.showFooter}
+      title={options.title}
       onQuit={options.onQuit}
     />
   );

@@ -88,25 +88,25 @@ describe('parseSlideEntry', () => {
 describe('parseSlidesText', () => {
   it('should parse single slide entry', () => {
     const result = parseSlidesText('slide.md');
-    expect(result).toHaveLength(1);
+    expect(result.entries).toHaveLength(1);
   });
 
   it('should parse multiple slide entries', () => {
     const content = 'slide1.md\nslide2.md\nslide3.md';
     const result = parseSlidesText(content);
-    expect(result).toHaveLength(3);
+    expect(result.entries).toHaveLength(3);
   });
 
   it('should skip empty lines', () => {
     const content = 'slide1.md\n\nslide2.md\n\n\nslide3.md';
     const result = parseSlidesText(content);
-    expect(result).toHaveLength(3);
+    expect(result.entries).toHaveLength(3);
   });
 
   it('should skip lines with only whitespace', () => {
     const content = 'slide1.md\n   \nslide2.md\n\t\nslide3.md';
     const result = parseSlidesText(content);
-    expect(result).toHaveLength(3);
+    expect(result.entries).toHaveLength(3);
   });
 
   it('should parse all entries correctly', () => {
@@ -114,10 +114,33 @@ describe('parseSlidesText', () => {
 slide2.md after:leftwipe
 slide3.md before:topwipe after:bottomwipe`;
     const result = parseSlidesText(content);
-    expect(result).toStrictEqual([
+    expect(result.entries).toStrictEqual([
       { filename: 'slide1.md', beforeTransition: 'tvon', afterTransition: null },
       { filename: 'slide2.md', beforeTransition: null, afterTransition: 'leftwipe' },
       { filename: 'slide3.md', beforeTransition: 'topwipe', afterTransition: 'bottomwipe' },
     ]);
+  });
+
+  it('should parse title from # line', () => {
+    const content = `# My Presentation
+slide1.md
+slide2.md`;
+    const result = parseSlidesText(content);
+    expect(result.title).toBe('My Presentation');
+    expect(result.entries).toHaveLength(2);
+  });
+
+  it('should return null title when no # line', () => {
+    const content = 'slide1.md\nslide2.md';
+    const result = parseSlidesText(content);
+    expect(result.title).toBeNull();
+  });
+
+  it('should use first # line as title', () => {
+    const content = `# First Title
+# Second Title
+slide1.md`;
+    const result = parseSlidesText(content);
+    expect(result.title).toBe('First Title');
   });
 });
