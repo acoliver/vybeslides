@@ -77,8 +77,10 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
           // Use OpenTUI's code component with markdown syntax highlighting
           // Headers get bold + accent color via tree-sitter
           const prefix = '#'.repeat(element.level) + ' ';
+          // Add top margin to separate headers from preceding content (except first element)
+          const marginTop = index > 0 ? 1 : 0;
           return (
-            <box key={index} style={{ marginBottom: element.level === 1 ? 1 : 0 }}>
+            <box key={index} style={{ marginTop, marginBottom: element.level === 1 ? 1 : 0 }}>
               <code
                 filetype="markdown"
                 content={prefix + text}
