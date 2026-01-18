@@ -184,4 +184,34 @@ This is a note.`;
     expect(result.elements[0]?.type).toBe('bullet_list');
     expect(result.elements[1]?.type).toBe('paragraph');
   });
+
+  it('should merge consecutive bullet lists separated by blank lines', () => {
+    const markdown = `- Item 1
+
+- Item 2
+
+- Item 3`;
+    const result = parseMarkdown(markdown);
+    // Should be merged into ONE bullet list
+    expect(result.elements).toHaveLength(1);
+    expect(result.elements[0]?.type).toBe('bullet_list');
+    const list = result.elements[0];
+    expect(list.type).toBe('bullet_list');
+    expect(list.type === 'bullet_list' && list.items).toHaveLength(3);
+  });
+
+  it('should NOT merge bullet lists separated by other content', () => {
+    const markdown = `- Item 1
+- Item 2
+
+Some paragraph.
+
+- Item 3
+- Item 4`;
+    const result = parseMarkdown(markdown);
+    expect(result.elements).toHaveLength(3);
+    expect(result.elements[0]?.type).toBe('bullet_list');
+    expect(result.elements[1]?.type).toBe('paragraph');
+    expect(result.elements[2]?.type).toBe('bullet_list');
+  });
 });

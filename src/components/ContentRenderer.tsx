@@ -88,13 +88,16 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
           // Use OpenTUI's code component with markdown syntax highlighting
           // Headers get bold + accent color via tree-sitter
           const prefix = '#'.repeat(element.level) + ' ';
-          // H1 always gets top margin (if not first), H2+ gets margin if after a list or code
+          // H1 always gets top margin (if not first)
+          // H2+ only gets margin if after a list, code block, or paragraph (not after another header)
+          const prevIsHeader = prevElement?.type === 'header';
           const marginTop =
-            index > 0 && (element.level === 1 || prevIsList || prevIsCodeBlock) ? 1 : 0;
-          // Only add bottom margin for H1, and not if next element is a table or code block
-          const marginBottom = element.level === 1 && !nextIsTableOrCode ? 1 : 0;
+            index > 0 && (element.level === 1 || (!prevIsHeader && (prevIsList || prevIsCodeBlock)))
+              ? 1
+              : 0;
+          // No bottom margin - let content follow directly
           return (
-            <box key={index} style={{ marginTop, marginBottom }}>
+            <box key={index} style={{ marginTop }}>
               <code
                 filetype="markdown"
                 content={prefix + text}
