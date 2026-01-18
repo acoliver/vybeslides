@@ -97,10 +97,7 @@ function parseOptions(args: string[]): OptionsParseResult {
     };
   };
 
-  return args.reduce<OptionsParseResult>(
-    reducer,
-    { success: true, options: initialOptions },
-  );
+  return args.reduce<OptionsParseResult>(reducer, { success: true, options: initialOptions });
 }
 
 function parseToggleOption(
@@ -132,4 +129,3 @@ function getHandledIndices(args: string[], index: number): number[] {
 
   return [];
 }
-

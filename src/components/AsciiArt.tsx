@@ -7,9 +7,7 @@ export interface AsciiArtProps {
 export function AsciiArt({ content }: AsciiArtProps): React.ReactNode {
   return (
     <box>
-      <text fg={LLXPRT_GREENSCREEN_THEME.colors.foreground}>
-        {content}
-      </text>
+      <text fg={LLXPRT_GREENSCREEN_THEME.colors.foreground}>{content}</text>
     </box>
   );
 }

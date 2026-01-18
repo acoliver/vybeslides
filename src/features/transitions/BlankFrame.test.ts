@@ -12,7 +12,7 @@ describe('BlankFrame', () => {
     it('should hide all content', () => {
       const blank = createBlankFrame();
       const frame = blank.getFrame(50, 80, 24);
-      
+
       const allHidden = frame.mask.every((row) => row.every((cell) => cell === false));
       expect(allHidden).toBe(true);
     });

@@ -22,7 +22,9 @@ export function HeaderBar({ slideNumber, totalSlides }: HeaderBarProps): React.R
       }}
     >
       <text fg={fg}>VybeSlides</text>
-      <text fg={fg}>[{slideNumber}/{totalSlides}]</text>
+      <text fg={fg}>
+        [{slideNumber}/{totalSlides}]
+      </text>
     </box>
   );
 }

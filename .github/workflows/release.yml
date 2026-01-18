@@ -34,14 +34,8 @@ jobs:
       - name: Install Dependencies
         run: bun install
 
-      - name: Run Tests
-        run: bun test
-
-      - name: Run Lint
-        run: bun run lint
-
-      - name: Run Typecheck
-        run: bun run typecheck
+      - name: Run Checks
+        run: bun run check
 
       - name: Configure Git User
         run: |

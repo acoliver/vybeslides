@@ -2,7 +2,11 @@ import { createPresentationController } from '../features/presentation/Presentat
 import type { LoadedSlide } from '../features/slides/Types';
 import { createBlankFrame, BLANK_FRAME_DURATION } from '../features/transitions/BlankFrame';
 import { getTransition } from '../features/transitions/TransitionRegistry';
-import type { Transition, TransitionFrame, TransitionType } from '../features/transitions/TransitionTypes';
+import type {
+  Transition,
+  TransitionFrame,
+  TransitionType,
+} from '../features/transitions/TransitionTypes';
 
 export type TransitionStepKind = 'before' | 'after' | 'blank';
 
@@ -18,7 +22,12 @@ export interface TransitionPlan {
 
 export interface TransitionOrchestrator {
   buildPlan: (fromIndex: number, toIndex: number, intent: 'navigation' | 'quit') => TransitionPlan;
-  getFrame: (step: TransitionStep, progress: number, width: number, height: number) => TransitionFrame;
+  getFrame: (
+    step: TransitionStep,
+    progress: number,
+    width: number,
+    height: number,
+  ) => TransitionFrame;
   getDuration: (step: TransitionStep) => number;
   getBlankDuration: () => number;
 }
@@ -26,7 +35,11 @@ export interface TransitionOrchestrator {
 export function createTransitionOrchestrator(slides: LoadedSlide[]): TransitionOrchestrator {
   const controller = createPresentationController(slides);
 
-  function buildPlan(fromIndex: number, toIndex: number, intent: 'navigation' | 'quit'): TransitionPlan {
+  function buildPlan(
+    fromIndex: number,
+    toIndex: number,
+    intent: 'navigation' | 'quit',
+  ): TransitionPlan {
     const info = controller.getTransitionForNavigation(fromIndex, toIndex, intent);
 
     if (info.type === 'instant' || info.transitionName === null) {
@@ -62,7 +75,12 @@ export function createTransitionOrchestrator(slides: LoadedSlide[]): TransitionO
     };
   }
 
-  function getFrame(step: TransitionStep, progress: number, width: number, height: number): TransitionFrame {
+  function getFrame(
+    step: TransitionStep,
+    progress: number,
+    width: number,
+    height: number,
+  ): TransitionFrame {
     return step.transition.getFrame(progress, width, height);
   }
 

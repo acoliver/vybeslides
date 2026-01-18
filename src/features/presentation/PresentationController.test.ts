@@ -10,7 +10,7 @@ describe('PresentationController - Transition Selection', () => {
     ];
     const controller = createPresentationController(slides);
     const transition = controller.getTransitionForNavigation(0, 1, 'navigation');
-    
+
     expect(transition.type).toBe('instant');
   });
 
@@ -21,7 +21,7 @@ describe('PresentationController - Transition Selection', () => {
     ];
     const controller = createPresentationController(slides);
     const transition = controller.getTransitionForNavigation(0, 1, 'navigation');
-    
+
     expect(transition.type).toBe('overlapping');
   });
 
@@ -32,7 +32,7 @@ describe('PresentationController - Transition Selection', () => {
     ];
     const controller = createPresentationController(slides);
     const transition = controller.getTransitionForNavigation(0, 1, 'navigation');
-    
+
     expect(transition.type).toBe('sequential');
   });
 
@@ -43,7 +43,7 @@ describe('PresentationController - Transition Selection', () => {
     ];
     const controller = createPresentationController(slides);
     const transition = controller.getTransitionForNavigation(0, 1, 'navigation');
-    
+
     expect(transition.type).toBe('sequential');
   });
 });
@@ -56,7 +56,7 @@ describe('PresentationController - Transition Names', () => {
     ];
     const controller = createPresentationController(slides);
     const transition = controller.getTransitionForNavigation(0, 1, 'navigation');
-    
+
     expect(transition.transitionName).toBe('diagonal');
   });
 
@@ -67,7 +67,7 @@ describe('PresentationController - Transition Names', () => {
     ];
     const controller = createPresentationController(slides);
     const transition = controller.getTransitionForNavigation(0, 1, 'navigation');
-    
+
     expect(transition.transitionName).toBe('tvoff');
   });
 
@@ -78,7 +78,7 @@ describe('PresentationController - Transition Names', () => {
     ];
     const controller = createPresentationController(slides);
     const transition = controller.getTransitionForNavigation(0, 1, 'navigation');
-    
+
     expect(transition.transitionName).toBe('leftwipe');
   });
 });
@@ -91,7 +91,7 @@ describe('PresentationController - Blank Delay', () => {
     ];
     const controller = createPresentationController(slides);
     const transition = controller.getTransitionForNavigation(0, 1, 'navigation');
-    
+
     expect(transition.hasBlankDelay).toBe(true);
   });
 
@@ -102,7 +102,7 @@ describe('PresentationController - Blank Delay', () => {
     ];
     const controller = createPresentationController(slides);
     const transition = controller.getTransitionForNavigation(0, 1, 'navigation');
-    
+
     expect(transition.hasBlankDelay).toBe(false);
   });
 
@@ -113,7 +113,7 @@ describe('PresentationController - Blank Delay', () => {
     ];
     const controller = createPresentationController(slides);
     const transition = controller.getTransitionForNavigation(0, 1, 'navigation');
-    
+
     expect(transition.hasBlankDelay).toBe(false);
   });
 });
@@ -125,7 +125,7 @@ describe('PresentationController - Special Cases', () => {
     ];
     const controller = createPresentationController(slides);
     const transition = controller.getTransitionForNavigation(0, 0, 'navigation');
-    
+
     expect(transition.type).toBe('instant');
   });
 
@@ -135,7 +135,7 @@ describe('PresentationController - Special Cases', () => {
     ];
     const controller = createPresentationController(slides);
     const firstSlideTransition = controller.getTransitionForNavigation(-1, 0, 'navigation');
-    
+
     expect(firstSlideTransition.transitionName).toBe('tvon');
   });
 
@@ -146,7 +146,7 @@ describe('PresentationController - Special Cases', () => {
     ];
     const controller = createPresentationController(slides);
     const transition = controller.getTransitionForNavigation(1, 1, 'quit');
-    
+
     expect(transition.transitionName).toBe('tvoff');
   });
 
@@ -157,7 +157,7 @@ describe('PresentationController - Special Cases', () => {
     ];
     const controller = createPresentationController(slides);
     const transition = controller.getTransitionForNavigation(1, 1, 'navigation');
-    
+
     expect(transition.transitionName).toBeNull();
   });
 });

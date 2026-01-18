@@ -62,7 +62,7 @@ describe('parseMarkdown - numbered lists', () => {
     const result = parseMarkdown('1. First item\n2. Second item');
     expect(result.elements[0]?.type).toBe('numbered_list');
   });
-  
+
   it('should parse numbered list with correct items', () => {
     const result = parseMarkdown('1. First item\n2. Second item');
     const element = result.elements[0];
@@ -92,7 +92,9 @@ describe('parseMarkdown - code blocks', () => {
 
 describe('parseMarkdown - tables', () => {
   it('should parse markdown table', () => {
-    const result = parseMarkdown('| Header1 | Header2 |\n|---------|----------|\n| Cell1   | Cell2   |');
+    const result = parseMarkdown(
+      '| Header1 | Header2 |\n|---------|----------|\n| Cell1   | Cell2   |',
+    );
     expect(result.elements[0]?.type).toBe('table');
   });
 });

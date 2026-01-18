@@ -4,9 +4,5 @@ export interface BoxBorderProps {
 }
 
 export function BoxBorder({ children }: BoxBorderProps): React.ReactNode {
-  return (
-    <box style={{ border: true }}>
-      {children}
-    </box>
-  );
+  return <box style={{ border: true }}>{children}</box>;
 }

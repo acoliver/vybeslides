@@ -23,13 +23,7 @@ describe('parseArguments', () => {
   });
 
   it('should parse both flags', () => {
-    const result = parseArguments([
-      './presentation',
-      '--header',
-      'off',
-      '--footer',
-      'off',
-    ]);
+    const result = parseArguments(['./presentation', '--header', 'off', '--footer', 'off']);
     expect(result.success && result.options.showHeader === false).toBe(true);
   });
 

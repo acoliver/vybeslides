@@ -7,7 +7,7 @@ describe('SlideDisplay - slide container', () => {
     const { getByText } = render(
       <SlideDisplay>
         <text>Test slide</text>
-      </SlideDisplay>
+      </SlideDisplay>,
     );
     expect(getByText('Test slide')).toBeTruthy();
   });
@@ -18,7 +18,7 @@ describe('SlideDisplay - optional header/footer', () => {
     const { getByText } = render(
       <SlideDisplay showHeader={true} slideNumber={1} totalSlides={5}>
         <text>Content</text>
-      </SlideDisplay>
+      </SlideDisplay>,
     );
     expect(getByText(/\[1\/5\]/)).toBeTruthy();
   });
@@ -27,7 +27,7 @@ describe('SlideDisplay - optional header/footer', () => {
     const { queryByText } = render(
       <SlideDisplay showHeader={false} slideNumber={1} totalSlides={5}>
         <text>Content</text>
-      </SlideDisplay>
+      </SlideDisplay>,
     );
     expect(queryByText(/\[1\/5\]/)).toBeNull();
   });
@@ -36,7 +36,7 @@ describe('SlideDisplay - optional header/footer', () => {
     const { getByText } = render(
       <SlideDisplay showFooter={true}>
         <text>Content</text>
-      </SlideDisplay>
+      </SlideDisplay>,
     );
     expect(getByText(/prev/i)).toBeTruthy();
   });
@@ -45,7 +45,7 @@ describe('SlideDisplay - optional header/footer', () => {
     const { queryByText } = render(
       <SlideDisplay showFooter={false}>
         <text>Content</text>
-      </SlideDisplay>
+      </SlideDisplay>,
     );
     expect(queryByText(/prev/i)).toBeNull();
   });

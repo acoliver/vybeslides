@@ -7,10 +7,7 @@ export type TransitionName =
   | 'tvon'
   | 'tvoff';
 
-export const TRANSITION_NAMES: [
-  TransitionName,
-  ...TransitionName[],
-] = [
+export const TRANSITION_NAMES: [TransitionName, ...TransitionName[]] = [
   'diagonal',
   'leftwipe',
   'rightwipe',
@@ -37,7 +34,12 @@ export interface LoadedSlide {
 }
 
 export interface ValidationError {
-  type: 'missing_file' | 'invalid_path' | 'invalid_transition' | 'invalid_directive' | 'missing_slides_txt';
+  type:
+    | 'missing_file'
+    | 'invalid_path'
+    | 'invalid_transition'
+    | 'invalid_directive'
+    | 'missing_slides_txt';
   message: string;
   filename?: string;
   line?: number;

@@ -1,8 +1,8 @@
-export type { 
-  VisibilityMask, 
-  TransitionFrame, 
-  Transition, 
-  TransitionType 
+export type {
+  VisibilityMask,
+  TransitionFrame,
+  Transition,
+  TransitionType,
 } from './TransitionTypes';
 
 export { getTransition, isValidTransitionName } from './TransitionRegistry';

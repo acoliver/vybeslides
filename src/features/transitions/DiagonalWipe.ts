@@ -1,14 +1,10 @@
 import type { Transition, TransitionFrame, VisibilityMask } from './TransitionTypes';
 
-function calculateDiagonalMask(
-  progress: number,
-  width: number,
-  height: number,
-): VisibilityMask {
+function calculateDiagonalMask(progress: number, width: number, height: number): VisibilityMask {
   const threshold = ((width + height) * progress) / 100;
 
   return Array.from({ length: height }, (_, y) =>
-    Array.from({ length: width }, (_, x) => x + y < threshold)
+    Array.from({ length: width }, (_, x) => x + y < threshold),
   );
 }
 

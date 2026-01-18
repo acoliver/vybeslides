@@ -39,13 +39,13 @@ describe('TransitionRegistry', () => {
   describe('getTransition', () => {
     it('should return diagonal wipe transition', () => {
       const transition = getTransition('diagonal');
-      
+
       expect(transition.getDuration()).toBeGreaterThan(0);
     });
 
     it('should return tvon transition', () => {
       const transition = getTransition('tvon');
-      
+
       expect(transition.getDuration()).toBe(2000);
     });
   });

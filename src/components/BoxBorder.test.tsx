@@ -7,7 +7,7 @@ describe('BoxBorder - basic rendering', () => {
     const { getByText } = render(
       <BoxBorder>
         <text>Content</text>
-      </BoxBorder>
+      </BoxBorder>,
     );
     expect(getByText('Content')).toBeTruthy();
   });
@@ -18,7 +18,7 @@ describe('BoxBorder - border style', () => {
     const { getByText } = render(
       <BoxBorder borderStyle="rounded">
         <text>Content</text>
-      </BoxBorder>
+      </BoxBorder>,
     );
     expect(getByText('Content')).toBeTruthy();
   });
@@ -27,7 +27,7 @@ describe('BoxBorder - border style', () => {
     const { getByText } = render(
       <BoxBorder borderStyle="lightweight">
         <text>Content</text>
-      </BoxBorder>
+      </BoxBorder>,
     );
     expect(getByText('Content')).toBeTruthy();
   });
@@ -38,7 +38,7 @@ describe('BoxBorder - content wrapping', () => {
     const { getByText } = render(
       <BoxBorder>
         <text>Test Content</text>
-      </BoxBorder>
+      </BoxBorder>,
     );
     expect(getByText('Test Content')).toBeTruthy();
   });

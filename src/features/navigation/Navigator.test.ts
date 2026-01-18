@@ -5,7 +5,7 @@ describe('Navigator - Forward Navigation', () => {
   it('should navigate forward to next slide when not on last slide', () => {
     const nav = createNavigator(5);
     const { result } = nav.handleForward();
-    
+
     expect(result.targetIndex).toBe(1);
   });
 
@@ -14,7 +14,7 @@ describe('Navigator - Forward Navigation', () => {
     const currentState = nav.getState();
     nav.updateState({ ...currentState, currentSlideIndex: 4 });
     const { result } = nav.handleForward();
-    
+
     expect(result.direction).toBe('stay');
   });
 
@@ -23,7 +23,7 @@ describe('Navigator - Forward Navigation', () => {
     const currentState = nav.getState();
     nav.updateState({ ...currentState, currentSlideIndex: 4, transitionInProgress: true });
     const { result } = nav.handleForward();
-    
+
     expect(result.cancelTransition).toBe(true);
   });
 });
@@ -34,7 +34,7 @@ describe('Navigator - Backward Navigation', () => {
     const currentState = nav.getState();
     nav.updateState({ ...currentState, currentSlideIndex: 2 });
     const { result } = nav.handleBackward();
-    
+
     expect(result.targetIndex).toBe(1);
   });
 
@@ -43,7 +43,7 @@ describe('Navigator - Backward Navigation', () => {
     const currentState = nav.getState();
     nav.updateState({ ...currentState, currentSlideIndex: 2 });
     const { result } = nav.handleBackward();
-    
+
     expect(result.requiresTransition).toBe(false);
   });
 });
@@ -54,7 +54,7 @@ describe('Navigator - Cancel Behaviors', () => {
     const currentState = nav.getState();
     nav.updateState({ ...currentState, currentSlideIndex: 2, transitionInProgress: true });
     const { result } = nav.handleKey('Escape');
-    
+
     expect(result.cancelTransition).toBe(true);
   });
 
@@ -63,7 +63,7 @@ describe('Navigator - Cancel Behaviors', () => {
     const currentState = nav.getState();
     nav.updateState({ ...currentState, currentSlideIndex: 2, transitionInProgress: true });
     const { result } = nav.handleBackward();
-    
+
     expect(result.cancelTransition).toBe(true);
   });
 
@@ -72,7 +72,7 @@ describe('Navigator - Cancel Behaviors', () => {
     const currentState = nav.getState();
     nav.updateState({ ...currentState, currentSlideIndex: 2, transitionInProgress: true });
     const { result } = nav.handleForward();
-    
+
     expect(result.cancelTransition).toBe(true);
   });
 
@@ -81,7 +81,7 @@ describe('Navigator - Cancel Behaviors', () => {
     const currentState = nav.getState();
     nav.updateState({ ...currentState, currentSlideIndex: 2, transitionInProgress: true });
     const { result } = nav.handleBackward();
-    
+
     expect(result.targetIndex).toBe(1);
   });
 
@@ -90,7 +90,7 @@ describe('Navigator - Cancel Behaviors', () => {
     const currentState = nav.getState();
     nav.updateState({ ...currentState, currentSlideIndex: 2, transitionInProgress: true });
     const { result } = nav.handleForward();
-    
+
     expect(result.targetIndex).toBe(3);
   });
 
@@ -99,7 +99,7 @@ describe('Navigator - Cancel Behaviors', () => {
     const currentState = nav.getState();
     nav.updateState({ ...currentState, currentSlideIndex: 2, transitionInProgress: true });
     const { result } = nav.handleKey('Escape');
-    
+
     expect(result.targetIndex).toBe(2);
   });
 });
@@ -110,14 +110,14 @@ describe('Navigator - Jump Navigation', () => {
     const currentState = nav.getState();
     nav.updateState({ ...currentState, currentSlideIndex: 2 });
     const { result } = nav.handleJump(5);
-    
+
     expect(result.targetIndex).toBe(5);
   });
 
   it('should jump instantly without transition', () => {
     const nav = createNavigator(10);
     const { result } = nav.handleJump(5);
-    
+
     expect(result.requiresTransition).toBe(false);
   });
 
@@ -126,14 +126,14 @@ describe('Navigator - Jump Navigation', () => {
     const currentState = nav.getState();
     nav.updateState({ ...currentState, transitionInProgress: true });
     const { result } = nav.handleJump(5);
-    
+
     expect(result.cancelTransition).toBe(true);
   });
 
   it('should clamp jump to valid slide range', () => {
     const nav = createNavigator(5);
     const { result } = nav.handleJump(10);
-    
+
     expect(result.targetIndex).toBe(4);
   });
 });
@@ -142,7 +142,7 @@ describe('Navigator - Quit Behavior', () => {
   it('should quit presentation', () => {
     const nav = createNavigator(5);
     const { result } = nav.handleQuit();
-    
+
     expect(result.direction).toBe('quit');
   });
 
@@ -151,7 +151,7 @@ describe('Navigator - Quit Behavior', () => {
     const currentState = nav.getState();
     nav.updateState({ ...currentState, transitionInProgress: true });
     const { result } = nav.handleQuit();
-    
+
     expect(result.cancelTransition).toBe(true);
   });
 });

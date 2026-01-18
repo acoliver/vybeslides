@@ -1,4 +1,15 @@
-import type { ParseResult, MarkdownElement, Header, Paragraph, BulletList, NumberedList, CodeBlock, AsciiArt, Table, Blockquote } from './Types';
+import type {
+  ParseResult,
+  MarkdownElement,
+  Header,
+  Paragraph,
+  BulletList,
+  NumberedList,
+  CodeBlock,
+  AsciiArt,
+  Table,
+  Blockquote,
+} from './Types';
 
 const BULLET_ITEM_PATTERN = /^[-*]\s/;
 const NUMBERED_ITEM_PATTERN = /^\d+\.\s/;
@@ -24,11 +35,14 @@ function parseHeader(line: string): Header | null {
   };
 }
 
-function parseBulletList(lines: string[], startIndex: number): { element: BulletList; nextIndex: number } {
+function parseBulletList(
+  lines: string[],
+  startIndex: number,
+): { element: BulletList; nextIndex: number } {
   let items: string[] = [];
   let i = startIndex;
   const itemPattern = /^[-*]\s+(.*)$/;
-  
+
   while (i < lines.length) {
     const match = itemPattern.exec(lines[i]);
     if (!match?.[1]) {
@@ -37,18 +51,21 @@ function parseBulletList(lines: string[], startIndex: number): { element: Bullet
     items = [...items, match[1]];
     i++;
   }
-  
+
   return {
     element: { type: 'bullet_list', items },
     nextIndex: i,
   };
 }
 
-function parseNumberedList(lines: string[], startIndex: number): { element: NumberedList; nextIndex: number } {
+function parseNumberedList(
+  lines: string[],
+  startIndex: number,
+): { element: NumberedList; nextIndex: number } {
   let items: string[] = [];
   let i = startIndex;
   const itemPattern = /^\d+\.\s+(.*)$/;
-  
+
   while (i < lines.length) {
     const match = itemPattern.exec(lines[i]);
     if (!match?.[1]) {
@@ -57,33 +74,42 @@ function parseNumberedList(lines: string[], startIndex: number): { element: Numb
     items = [...items, match[1]];
     i++;
   }
-  
+
   return {
     element: { type: 'numbered_list', items },
     nextIndex: i,
   };
 }
 
-function parseTable(lines: string[], startIndex: number): { element: Table; nextIndex: number } | null {
+function parseTable(
+  lines: string[],
+  startIndex: number,
+): { element: Table; nextIndex: number } | null {
   if (startIndex + 1 >= lines.length) {
     return null;
   }
-  
+
   const separatorMatch = TABLE_SEPARATOR_PATTERN.exec(lines[startIndex + 1]);
   if (!separatorMatch) {
     return null;
   }
-  
-  const headerCells = lines[startIndex].split('|').slice(1, -1).map(cell => cell.trim());
+
+  const headerCells = lines[startIndex]
+    .split('|')
+    .slice(1, -1)
+    .map((cell) => cell.trim());
   let rows: string[][] = [];
   let i = startIndex + 2;
-  
+
   while (i < lines.length && TABLE_ROW_PATTERN.exec(lines[i])) {
-    const rowCells = lines[i].split('|').slice(1, -1).map(cell => cell.trim());
+    const rowCells = lines[i]
+      .split('|')
+      .slice(1, -1)
+      .map((cell) => cell.trim());
     rows = [...rows, rowCells];
     i++;
   }
-  
+
   return {
     element: { type: 'table', headers: headerCells, rows },
     nextIndex: i,
@@ -102,27 +128,31 @@ function parseBlockquote(line: string): Blockquote | null {
   };
 }
 
-function parseCodeBlock(lines: string[], startIndex: number): { element: CodeBlock | AsciiArt; nextIndex: number } | null {
+function parseCodeBlock(
+  lines: string[],
+  startIndex: number,
+): { element: CodeBlock | AsciiArt; nextIndex: number } | null {
   const startPattern = /^```(\w+)?$/;
   const match = startPattern.exec(lines[startIndex]);
   if (!match) {
     return null;
   }
-  
+
   const language = match[1] || null;
   let codeLines: string[] = [];
   let i = startIndex + 1;
-  
+
   while (i < lines.length && !CODE_BLOCK_END_PATTERN.exec(lines[i])) {
     codeLines = [...codeLines, lines[i]];
     i++;
   }
-  
+
   const content = codeLines.join('\n');
-  const element: CodeBlock | AsciiArt = language === 'ascii'
-    ? { type: 'ascii_art', content }
-    : { type: 'code_block', language, content };
-  
+  const element: CodeBlock | AsciiArt =
+    language === 'ascii'
+      ? { type: 'ascii_art', content }
+      : { type: 'code_block', language, content };
+
   return {
     element,
     nextIndex: i + 1,

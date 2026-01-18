@@ -10,11 +10,19 @@ export interface TransitionInfo {
 }
 
 export interface PresentationController {
-  getTransitionForNavigation(fromIndex: number, toIndex: number, intent: NavigationIntent): TransitionInfo;
+  getTransitionForNavigation(
+    fromIndex: number,
+    toIndex: number,
+    intent: NavigationIntent,
+  ): TransitionInfo;
 }
 
 export function createPresentationController(slides: LoadedSlide[]): PresentationController {
-  function getTransitionForNavigation(fromIndex: number, toIndex: number, intent: NavigationIntent): TransitionInfo {
+  function getTransitionForNavigation(
+    fromIndex: number,
+    toIndex: number,
+    intent: NavigationIntent,
+  ): TransitionInfo {
     if (toIndex < 0 || toIndex >= slides.length) {
       return { type: 'instant', transitionName: null, hasBlankDelay: false };
     }
@@ -23,7 +31,11 @@ export function createPresentationController(slides: LoadedSlide[]): Presentatio
 
     if (fromIndex < 0) {
       if (nextSlide.beforeTransition !== null) {
-        return { type: 'overlapping', transitionName: nextSlide.beforeTransition, hasBlankDelay: false };
+        return {
+          type: 'overlapping',
+          transitionName: nextSlide.beforeTransition,
+          hasBlankDelay: false,
+        };
       }
       return { type: 'instant', transitionName: null, hasBlankDelay: false };
     }
@@ -46,16 +58,24 @@ export function createPresentationController(slides: LoadedSlide[]): Presentatio
     }
 
     if (!hasAfter && hasBefore) {
-      return { type: 'overlapping', transitionName: nextSlide.beforeTransition, hasBlankDelay: false };
+      return {
+        type: 'overlapping',
+        transitionName: nextSlide.beforeTransition,
+        hasBlankDelay: false,
+      };
     }
 
     if (hasAfter && !hasBefore) {
-      return { type: 'sequential', transitionName: currentSlide.afterTransition, hasBlankDelay: true };
+      return {
+        type: 'sequential',
+        transitionName: currentSlide.afterTransition,
+        hasBlankDelay: true,
+      };
     }
 
-    return { 
-      type: 'sequential', 
-      transitionName: currentSlide.afterTransition, 
+    return {
+      type: 'sequential',
+      transitionName: currentSlide.afterTransition,
       hasBlankDelay: true,
     };
   }

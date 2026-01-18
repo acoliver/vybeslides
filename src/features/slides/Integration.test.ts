@@ -16,11 +16,15 @@ interface ValidationSuccess {
   }[];
 }
 
-function hasEntries(result: Awaited<ReturnType<typeof validatePresentation>>): result is ValidationSuccess {
+function hasEntries(
+  result: Awaited<ReturnType<typeof validatePresentation>>,
+): result is ValidationSuccess {
   return Boolean(result.entries);
 }
 
-function requireEntries(result: Awaited<ReturnType<typeof validatePresentation>>): ValidationSuccess {
+function requireEntries(
+  result: Awaited<ReturnType<typeof validatePresentation>>,
+): ValidationSuccess {
   if (!hasEntries(result)) {
     throw new Error('Expected entries to be defined');
   }

@@ -1,14 +1,10 @@
 import type { Transition, TransitionFrame, VisibilityMask } from './TransitionTypes';
 
-function calculateBottomWipeMask(
-  progress: number,
-  width: number,
-  height: number,
-): VisibilityMask {
+function calculateBottomWipeMask(progress: number, width: number, height: number): VisibilityMask {
   const visibleRows = Math.floor((height * progress) / 100);
 
   return Array.from({ length: height }, (_, y) =>
-    Array.from({ length: width }, () => y >= height - visibleRows)
+    Array.from({ length: width }, () => y >= height - visibleRows),
   );
 }
 

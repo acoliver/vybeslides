@@ -2,7 +2,7 @@ import type { SlideEntry } from './Types';
 
 export function parseSlideEntry(line: string): SlideEntry {
   const parts = line.trim().split(/\s+/);
-  
+
   const parsedData = parts.reduce<{
     filename: string;
     beforeTransition: string | null;

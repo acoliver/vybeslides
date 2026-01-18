@@ -22,9 +22,7 @@ export function SlideDisplay({
   return (
     <box style={{ flexDirection: 'column', flexGrow: 1, backgroundColor: bg }}>
       {showHeader && <HeaderBar slideNumber={slideNumber} totalSlides={totalSlides} />}
-      <box style={{ flexGrow: 1, padding: 1 }}>
-        {children}
-      </box>
+      <box style={{ flexGrow: 1, padding: 1 }}>{children}</box>
       {showFooter && <FooterBar />}
     </box>
   );

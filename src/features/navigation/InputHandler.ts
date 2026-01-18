@@ -1,4 +1,12 @@
-export type InputAction = 'forward' | 'backward' | 'quit' | 'cancel' | 'jump' | 'jump_mode' | 'help' | 'unknown';
+export type InputAction =
+  | 'forward'
+  | 'backward'
+  | 'quit'
+  | 'cancel'
+  | 'jump'
+  | 'jump_mode'
+  | 'help'
+  | 'unknown';
 
 export interface KeyParseResult {
   action: InputAction;

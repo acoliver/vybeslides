@@ -16,7 +16,7 @@ export interface StaticNoiseProps {
 
 export function StaticNoise({ width, height }: StaticNoiseProps): React.ReactNode {
   const noise = generateNoise(width, height);
-  
+
   return (
     <box>
       <text>{noise}</text>

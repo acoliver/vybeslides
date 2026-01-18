@@ -230,7 +230,11 @@ export function PresentationRuntime({
         return;
       }
       if (transitionKind === 'after' || transitionKind === 'blank') {
-        applyVisibilityMask(buffer, invertVisibilityMask(transitionFrame.mask), RGBA.fromHex('#000000'));
+        applyVisibilityMask(
+          buffer,
+          invertVisibilityMask(transitionFrame.mask),
+          RGBA.fromHex('#000000'),
+        );
       }
     },
     [transitionActive, transitionFrame, transitionKind],

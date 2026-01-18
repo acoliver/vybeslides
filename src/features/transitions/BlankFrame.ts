@@ -3,9 +3,7 @@ import type { Transition, TransitionFrame, VisibilityMask } from './TransitionTy
 export const BLANK_FRAME_DURATION = 100;
 
 function createBlankMask(width: number, height: number): VisibilityMask {
-  return Array.from({ length: height }, () =>
-    Array.from({ length: width }, () => false)
-  );
+  return Array.from({ length: height }, () => Array.from({ length: width }, () => false));
 }
 
 export function createBlankFrame(): Transition {

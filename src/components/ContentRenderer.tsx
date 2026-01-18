@@ -13,16 +13,26 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
     <box style={{ flexDirection: 'column', gap: 1 }}>
       {elements.map((element, index) => {
         if (element.type === 'header') {
-          return <text key={index} fg={accent}>{element.content}</text>;
+          return (
+            <text key={index} fg={accent}>
+              {element.content}
+            </text>
+          );
         }
         if (element.type === 'paragraph') {
-          return <text key={index} fg={fg}>{element.content}</text>;
+          return (
+            <text key={index} fg={fg}>
+              {element.content}
+            </text>
+          );
         }
         if (element.type === 'bullet_list') {
           return (
             <box key={index} style={{ flexDirection: 'column' }}>
               {element.items.map((item, itemIndex) => (
-                <text key={itemIndex} fg={fg}>• {item}</text>
+                <text key={itemIndex} fg={fg}>
+                  • {item}
+                </text>
               ))}
             </box>
           );
@@ -31,7 +41,9 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
           return (
             <box key={index} style={{ flexDirection: 'column' }}>
               {element.items.map((item, itemIndex) => (
-                <text key={itemIndex} fg={fg}>{itemIndex + 1}. {item}</text>
+                <text key={itemIndex} fg={fg}>
+                  {itemIndex + 1}. {item}
+                </text>
               ))}
             </box>
           );
@@ -41,7 +53,9 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
           return (
             <box key={index} style={{ flexDirection: 'column' }}>
               {lines.map((line, lineIndex) => (
-                <text key={lineIndex} fg={accent}>{line}</text>
+                <text key={lineIndex} fg={accent}>
+                  {line}
+                </text>
               ))}
             </box>
           );
@@ -51,7 +65,9 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
           return (
             <box key={index} border style={{ borderColor: fg, padding: 1 }}>
               {lines.map((line, lineIndex) => (
-                <text key={lineIndex} fg={fg}>{line}</text>
+                <text key={lineIndex} fg={fg}>
+                  {line}
+                </text>
               ))}
             </box>
           );
@@ -62,13 +78,19 @@ export function ContentRenderer({ elements }: ContentRendererProps): React.React
               <text fg={accent}>| {element.headers.join(' | ')} |</text>
               <text fg={fg}>|{element.headers.map(() => '---').join('|')}|</text>
               {element.rows.map((row, rowIndex) => (
-                <text key={rowIndex} fg={fg}>| {row.join(' | ')} |</text>
+                <text key={rowIndex} fg={fg}>
+                  | {row.join(' | ')} |
+                </text>
               ))}
             </box>
           );
         }
         if (element.type === 'blockquote') {
-          return <text key={index} fg={fg}>&gt; {element.content}</text>;
+          return (
+            <text key={index} fg={fg}>
+              &gt; {element.content}
+            </text>
+          );
         }
         return null;
       })}

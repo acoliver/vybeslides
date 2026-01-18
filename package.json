@@ -16,12 +16,14 @@
   "scripts": {
     "build": "echo 'vybeslides uses bun runtime - no build required'",
     "lint": "bunx eslint \"src/**/*.{ts,tsx}\" \"scripts/**/*.ts\"",
+    "format": "bunx prettier --write \"src/**/*.{ts,tsx}\" \"scripts/**/*.ts\"",
+    "format:check": "bunx prettier --check \"src/**/*.{ts,tsx}\" \"scripts/**/*.ts\"",
     "test": "bunx vitest run",
     "test:watch": "bunx vitest",
     "test:ci": "bunx vitest run",
     "test:coverage": "bunx vitest run --coverage",
     "check:limits": "bun run scripts/check-limits.ts",
-    "check": "bun run lint && bun run test && bun run check:limits",
+    "check": "bun run format:check && bun run lint && bun run typecheck && bun run test && bun run check:limits",
     "typecheck": "bunx tsc --noEmit"
   },
   "keywords": [
@@ -67,6 +69,7 @@
     "eslint-plugin-sonarjs": "^3.0.5",
     "globals": "^16.5.0",
     "happy-dom": "^20.3.1",
+    "prettier": "^3.8.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.15"
   }

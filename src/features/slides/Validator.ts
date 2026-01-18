@@ -6,7 +6,7 @@ import { TRANSITION_NAME_SET } from './Types';
 
 export async function validatePresentation(presentationDir: string): Promise<ValidationResult> {
   const slidesTxtPath = path.join(presentationDir, 'slides.txt');
-  
+
   try {
     await fs.access(slidesTxtPath);
   } catch {
@@ -24,7 +24,7 @@ export async function validatePresentation(presentationDir: string): Promise<Val
 
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i];
-    
+
     if (hasDirectiveWithUnknownTransition(entry)) {
       return {
         success: false,

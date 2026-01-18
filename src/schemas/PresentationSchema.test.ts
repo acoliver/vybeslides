@@ -7,9 +7,7 @@ describe('PresentationSchema', () => {
       const input = {
         id: 'pres-1',
         title: 'My Presentation',
-        slides: [
-          { id: 'slide-1', type: 'content' },
-        ],
+        slides: [{ id: 'slide-1', type: 'content' }],
       };
 
       const result = PresentationSchema.safeParse(input);
@@ -101,9 +99,7 @@ describe('PresentationSchema', () => {
       const input = {
         id: 'pres-7',
         title: 'Bad Slides',
-        slides: [
-          { id: '', type: 'content' },
-        ],
+        slides: [{ id: '', type: 'content' }],
       };
 
       const result = PresentationSchema.safeParse(input);

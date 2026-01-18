@@ -17,10 +17,7 @@ const FUNCTION_ERROR_LINES = 120;
 
 const projectRoot = path.resolve(new URL('.', import.meta.url).pathname, '..');
 
-const sourceRoots = [
-  path.join(projectRoot, '..', 'src'),
-  path.join(projectRoot, '..', 'scripts'),
-];
+const sourceRoots = [path.join(projectRoot, '..', 'src'), path.join(projectRoot, '..', 'scripts')];
 
 const violations: Violation[] = [];
 const logger = getLogger('vybeslides:check-limits');
@@ -57,10 +54,7 @@ function collectSourceFiles(root: string): string[] {
 }
 
 function isSupportedFile(fileName: string): boolean {
-  return (
-    fileName.endsWith('.ts') &&
-    !fileName.endsWith('.d.ts')
-  );
+  return fileName.endsWith('.ts') && !fileName.endsWith('.d.ts');
 }
 
 function checkFileLimits(filePath: string): void {
@@ -114,10 +108,7 @@ function isFunctionWithBody(
   node: ts.Node,
 ): node is ts.FunctionLikeDeclarationBase & { body: ts.Block } {
   return (
-    ts.isFunctionLike(node) &&
-    'body' in node &&
-    node.body !== undefined &&
-    ts.isBlock(node.body)
+    ts.isFunctionLike(node) && 'body' in node && node.body !== undefined && ts.isBlock(node.body)
   );
 }
 
